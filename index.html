@@ -3,149 +3,307 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>welcome..</title>
+    <title>hii there</title>
     <link rel="icon" href="https://i.pinimg.com/736x/6b/ae/53/6bae53233b224595460154219fb69cc8.jpg">
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
         
         body {
-            background: #0f1014;
-            color: #f0f0f0;
+            background: linear-gradient(135deg, #0c0e1a 0%, #1a0c2e 100%);
+            color: #ffffff;
             min-height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
-            padding: 20px;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             overflow: hidden;
+            cursor: none;
             position: relative;
         }
         
-        body::before {
-            content: "";
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: url('https://i.pinimg.com/1200x/f7/96/3f/f7963fdd504e80c8b5da69757ec299ee.jpg') center/cover;
-            opacity: 0.2;
-            z-index: -1;
-        }
-        
-        .content {
+        .container {
             text-align: center;
-            max-width: 600px;
+            max-width: 800px;
             padding: 30px;
-            z-index: 2;
+            z-index: 10;
+            position: relative;
         }
         
         h1 {
-            font-size: 3.5rem;
-            margin-bottom: 15px;
-            color: white;
-            letter-spacing: 1px;
-            text-shadow: 0 2px 10px rgba(0,0,0,0.7);
+            font-size: 4rem;
+            margin-bottom: 20px;
+            color: #fff;
+            text-shadow: 0 0 20px rgba(255, 215, 0, 0.8);
+            letter-spacing: 2px;
+            animation: glow 2s infinite alternate;
         }
         
         h2 {
-            font-size: 2rem;
+            font-size: 2.5rem;
             margin-bottom: 40px;
             color: #b9bbbe;
             font-weight: 300;
+            text-shadow: 0 0 15px rgba(114, 137, 218, 0.7);
         }
         
         p {
-            font-size: 1.4rem;
-            line-height: 1.7;
+            font-size: 1.8rem;
+            line-height: 1.6;
             background: rgba(25, 27, 33, 0.7);
-            padding: 25px;
-            border-radius: 15px;
-            border-left: 4px solid #7289da;
+            padding: 30px;
+            border-radius: 20px;
+            border: 2px solid #7289da;
             backdrop-filter: blur(5px);
-            max-width: 500px;
+            max-width: 700px;
             margin: 0 auto;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            text-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
         }
         
-        .floating-star {
-            position: absolute;
-            top: 30px;
-            right: 30px;
-            width: 70px;
-            height: 70px;
-            border-radius: 50%;
-            background: url('https://cdn.discordapp.com/attachments/805483021544194059/1393997777297735841/image0.png') center/cover;
-            box-shadow: 0 0 30px rgba(255, 215, 0, 0.6);
-            z-index: 10;
-            animation: float 8s ease-in-out infinite;
-            cursor: pointer;
-        }
-        
-        @keyframes float {
-            0% { transform: translateY(0) rotate(0deg); }
-            25% { transform: translateY(-20px) rotate(10deg); }
-            50% { transform: translateY(0) rotate(0deg); }
-            75% { transform: translateY(15px) rotate(-10deg); }
-            100% { transform: translateY(0) rotate(0deg); }
-        }
-        
-        .glow {
-            position: absolute;
-            top: 50%;
-            left: 50%;
+        .custom-cursor {
+            position: fixed;
+            width: 40px;
+            height: 40px;
+            background: url('https://cdn.discordapp.com/attachments/805483021544194059/1394005789689122926/attachment.png?ex=68753c8f&is=6873eb0f&hm=90746c7763dc69980880356905ab205ae77e515f28f8002945e758543fc43d5f&') center/cover;
+            pointer-events: none;
+            z-index: 1000;
             transform: translate(-50%, -50%);
-            width: 300px;
-            height: 300px;
-            background: radial-gradient(circle, rgba(114,137,218,0.4) 0%, transparent 70%);
+            transition: transform 0.1s;
+        }
+        
+        .star {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: white;
             border-radius: 50%;
-            filter: blur(40px);
+            animation: fall linear forwards;
+            box-shadow: 0 0 10px 2px rgba(255, 255, 255, 0.8);
+        }
+        
+        .click-star {
+            position: absolute;
+            width: 30px;
+            height: 30px;
+            background: url('https://cdn.discordapp.com/attachments/805483021544194059/1394005789689122926/attachment.png?ex=68753c8f&is=6873eb0f&hm=90746c7763dc69980880356905ab205ae77e515f28f8002945e758543fc43d5f&') center/cover;
+            pointer-events: none;
+            z-index: 100;
+            animation: fall-star linear forwards;
+        }
+        
+        @keyframes glow {
+            0% { text-shadow: 0 0 20px rgba(255, 215, 0, 0.8); }
+            100% { text-shadow: 0 0 30px rgba(255, 215, 0, 1), 0 0 50px rgba(255, 215, 0, 0.6); }
+        }
+        
+        @keyframes fall {
+            to {
+                transform: translateY(100vh);
+                opacity: 0;
+            }
+        }
+        
+        @keyframes fall-star {
+            0% {
+                transform: translate(-50%, -50%) scale(1);
+                opacity: 1;
+            }
+            100% {
+                transform: translate(-50%, 100vh) scale(0.5) rotate(360deg);
+                opacity: 0;
+            }
+        }
+        
+        .constellation {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            pointer-events: none;
             z-index: 1;
-            animation: pulse 4s infinite alternate;
+        }
+        
+        .star-point {
+            position: absolute;
+            width: 3px;
+            height: 3px;
+            background: white;
+            border-radius: 50%;
+            box-shadow: 0 0 8px 1px rgba(255, 255, 255, 0.8);
+        }
+        
+        .star-line {
+            position: absolute;
+            height: 2px;
+            background: rgba(255, 255, 255, 0.3);
+            transform-origin: left center;
+        }
+        
+        .pulse {
+            animation: pulse 3s infinite;
         }
         
         @keyframes pulse {
-            0% { opacity: 0.3; transform: translate(-50%, -50%) scale(0.8); }
-            100% { opacity: 0.6; transform: translate(-50%, -50%) scale(1.2); }
+            0% { opacity: 0.3; }
+            50% { opacity: 1; }
+            100% { opacity: 0.3; }
         }
         
         @media (max-width: 768px) {
             h1 {
-                font-size: 2.5rem;
+                font-size: 2.8rem;
             }
             
             h2 {
-                font-size: 1.5rem;
+                font-size: 1.8rem;
             }
             
             p {
-                font-size: 1.1rem;
+                font-size: 1.4rem;
                 padding: 20px;
-            }
-            
-            .floating-star {
-                width: 50px;
-                height: 50px;
-                top: 20px;
-                right: 20px;
             }
         }
     </style>
 </head>
 <body>
-    <!-- Background glow effect -->
-    <div class="glow"></div>
+    <!-- Custom cursor -->
+    <div class="custom-cursor" id="cursor"></div>
     
-    <!-- Floating star icon -->
-    <div class="floating-star"></div>
-    
-    <div class="content">
+    <!-- Container for text -->
+    <div class="container">
         <h1>welcome</h1>
         <h2>rhy was here...</h2>
         <p>I see you opening this from Discord and there's nothing special here...</p>
     </div>
+    
+    <!-- Constellation container -->
+    <div class="constellation" id="constellation"></div>
+    
+    <script>
+        // Custom cursor
+        const cursor = document.getElementById('cursor');
+        document.addEventListener('mousemove', (e) => {
+            cursor.style.left = e.clientX + 'px';
+            cursor.style.top = e.clientY + 'px';
+        });
+        
+        // Create falling stars
+        function createFallingStar() {
+            const star = document.createElement('div');
+            star.classList.add('star');
+            
+            // Random position
+            const left = Math.random() * 100;
+            star.style.left = `${left}%`;
+            
+            // Random fall duration
+            const duration = 2 + Math.random() * 8;
+            star.style.animation = `fall ${duration}s linear forwards`;
+            
+            // Add to body
+            document.body.appendChild(star);
+            
+            // Remove after animation completes
+            setTimeout(() => {
+                star.remove();
+            }, duration * 1000);
+        }
+        
+        // Create constellation
+        function createConstellation() {
+            const container = document.getElementById('constellation');
+            const starCount = 100;
+            const stars = [];
+            
+            // Create stars
+            for (let i = 0; i < starCount; i++) {
+                const star = document.createElement('div');
+                star.classList.add('star-point');
+                star.classList.add('pulse');
+                
+                // Random position
+                const left = Math.random() * 100;
+                const top = Math.random() * 100;
+                star.style.left = `${left}%`;
+                star.style.top = `${top}%`;
+                
+                // Random pulse delay
+                star.style.animationDelay = `${Math.random() * 3}s`;
+                
+                container.appendChild(star);
+                stars.push({element: star, x: left, y: top});
+            }
+            
+            // Create connections between stars
+            for (let i = 0; i < stars.length; i++) {
+                for (let j = i + 1; j < stars.length; j++) {
+                    const star1 = stars[i];
+                    const star2 = stars[j];
+                    
+                    // Calculate distance
+                    const dx = star1.x - star2.x;
+                    const dy = star1.y - star2.y;
+                    const distance = Math.sqrt(dx * dx + dy * dy);
+                    
+                    // Only connect relatively close stars
+                    if (distance < 15) {
+                        const line = document.createElement('div');
+                        line.classList.add('star-line');
+                        
+                        // Position between stars
+                        const left = Math.min(star1.x, star2.x);
+                        const top = (star1.y + star2.y) / 2;
+                        
+                        // Calculate length and angle
+                        const length = distance;
+                        const angle = Math.atan2(star2.y - star1.y, star2.x - star1.x) * 180 / Math.PI;
+                        
+                        line.style.left = `${left}%`;
+                        line.style.top = `${top}%`;
+                        line.style.width = `${length}%`;
+                        line.style.transform = `rotate(${angle}deg)`;
+                        
+                        container.appendChild(line);
+                    }
+                }
+            }
+        }
+        
+        // Create star on click
+        document.addEventListener('click', (e) => {
+            const star = document.createElement('div');
+            star.classList.add('click-star');
+            
+            // Position at click location
+            star.style.left = e.clientX + 'px';
+            star.style.top = e.clientY + 'px';
+            
+            // Random fall duration
+            const duration = 2 + Math.random() * 3;
+            star.style.animation = `fall-star ${duration}s linear forwards`;
+            
+            // Add to body
+            document.body.appendChild(star);
+            
+            // Remove after animation completes
+            setTimeout(() => {
+                star.remove();
+            }, duration * 1000);
+        });
+        
+        // Initialize effects
+        window.onload = function() {
+            // Create initial falling stars
+            setInterval(createFallingStar, 300);
+            
+            // Create constellation
+            createConstellation();
+        };
+    </script>
 </body>
 </html>
