@@ -51,10 +51,22 @@
         
         .subtitle {
             font-size: 2.5rem;
-            margin-bottom: 30px;
+            margin-bottom: 10px;
             color: #b9bbbe;
             font-weight: 300;
             text-shadow: 0 0 15px rgba(114, 137, 218, 0.7);
+        }
+        
+        .clock {
+            font-size: 2rem;
+            color: white;
+            text-shadow: 
+                0 0 10px rgba(255, 255, 255, 0.8),
+                0 0 20px rgba(255, 255, 255, 0.6);
+            letter-spacing: 1px;
+            margin-top: 10px;
+            animation: whiteGlow 2s infinite alternate;
+            font-weight: 300;
         }
         
         .social-section {
@@ -307,6 +319,11 @@
             100% { text-shadow: 0 0 30px rgba(255, 215, 0, 1), 0 0 50px rgba(255, 215, 0, 0.6); }
         }
         
+        @keyframes whiteGlow {
+            0% { text-shadow: 0 0 10px rgba(255, 255, 255, 0.8); }
+            100% { text-shadow: 0 0 20px rgba(255, 255, 255, 1), 0 0 40px rgba(255, 255, 255, 0.8); }
+        }
+        
         @keyframes twinkle {
             0%, 100% { opacity: 0.2; }
             50% { opacity: 1; }
@@ -319,6 +336,10 @@
             
             .subtitle {
                 font-size: 1.8rem;
+            }
+            
+            .clock {
+                font-size: 1.5rem;
             }
             
             .social-title {
@@ -354,6 +375,7 @@
         <div class="header">
             <div class="welcome">hello there!</div>
             <div class="subtitle">rhy was here...</div>
+            <div id="clock" class="clock"></div>
         </div>
         
         <div class="social-section">
@@ -559,6 +581,19 @@
             document.getElementById('visitorCount').textContent = count;
         }
         
+        // UTC-8 Clock Function
+        function updateClock() {
+            const now = new Date();
+            // Convert to UTC-8 (8 hours behind UTC)
+            const utcMinus8 = new Date(now.getTime() - (8 * 60 * 60 * 1000));
+            
+            const hours = String(utcMinus8.getUTCHours()).padStart(2, '0');
+            const minutes = String(utcMinus8.getUTCMinutes()).padStart(2, '0');
+            const seconds = String(utcMinus8.getUTCSeconds()).padStart(2, '0');
+            
+            document.getElementById('clock').textContent = `${hours}:${minutes}:${seconds} UTC-8`;
+        }
+        
         // Set up event listeners
         document.getElementById('discordCopy').addEventListener('click', copyUsername);
         
@@ -566,6 +601,8 @@
         window.onload = function() {
             createStars();
             updateVisitorCounter();
+            updateClock();
+            setInterval(updateClock, 1000);
         };
     </script>
 </body>
