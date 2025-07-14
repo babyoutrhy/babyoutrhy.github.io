@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Social Hub | babyoutrhy</title>
+    <title>hii there</title>
     <link rel="icon" href="https://i.pinimg.com/1200x/f7/96/3f/f7963fdd504e80c8b5da69757ec299ee.jpg">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
@@ -12,10 +12,11 @@
             padding: 0;
             box-sizing: border-box;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            cursor: none;
         }
         
         body {
-            background: linear-gradient(135deg, #1a1b20 0%, #0f1014 100%);
+            background: linear-gradient(135deg, #0c0e1a 0%, #1a0c2e 100%);
             color: #f0f0f0;
             min-height: 100vh;
             display: flex;
@@ -119,7 +120,7 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: url('https://cdn.discordapp.com/attachments/805483021544194059/1393997777297735841/image0.png') center/cover;
+            background: url('https://cdn.discordapp.com/attachments/805483021544194059/1394005789689122926/attachment.png?ex=68753c8f&is=6873eb0f&hm=90746c7763dc69980880356905ab205ae77e515f28f8002945e758543fc43d5f&') center/cover;
             opacity: 0.1;
             z-index: -1;
         }
@@ -162,7 +163,7 @@
             font-weight: bold;
             transition: all 0.3s ease;
             border: 2px solid transparent;
-            cursor: pointer;
+            cursor: none;
             font-size: 1.2rem;
             width: 80%;
             max-width: 200px;
@@ -194,8 +195,61 @@
             transform: translateX(0);
         }
         
-        .floating-stars {
+        /* Custom Cursor Styles */
+        .cursor {
+            position: fixed;
+            width: 10px;
+            height: 10px;
+            background: white;
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 10000;
+            box-shadow: 0 0 15px rgba(255, 255, 255, 0.8);
+            transform: translate(-50%, -50%);
+            transition: width 0.2s, height 0.2s;
+        }
+        
+        .cursor.active {
+            width: 30px;
+            height: 30px;
+        }
+        
+        .cursor-trail {
+            position: fixed;
+            width: 6px;
+            height: 6px;
+            background: white;
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 9999;
+            opacity: 0.7;
+            box-shadow: 0 0 10px rgba(255, 255, 255, 0.6);
+            transform: translate(-50%, -50%);
+        }
+        
+        .cursor-laser {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            pointer-events: none;
+            z-index: 9998;
+        }
+        
+        .laser-trail {
             position: absolute;
+            width: 4px;
+            height: 4px;
+            background: white;
+            border-radius: 50%;
+            box-shadow: 0 0 8px 2px rgba(255, 255, 255, 0.8);
+            opacity: 0.9;
+        }
+        
+        /* Star Background */
+        .stars {
+            position: fixed;
             top: 0;
             left: 0;
             width: 100%;
@@ -206,12 +260,12 @@
         
         .star {
             position: absolute;
-            width: 4px;
-            height: 4px;
+            width: 3px;
+            height: 3px;
             background: white;
             border-radius: 50%;
-            animation: fall linear forwards;
-            box-shadow: 0 0 10px 2px rgba(255, 255, 255, 0.8);
+            box-shadow: 0 0 10px rgba(255, 255, 255, 0.8);
+            animation: twinkle var(--duration) infinite ease-in-out;
         }
         
         @keyframes fadeIn {
@@ -224,11 +278,9 @@
             100% { text-shadow: 0 0 30px rgba(255, 215, 0, 1), 0 0 50px rgba(255, 215, 0, 0.6); }
         }
         
-        @keyframes fall {
-            to {
-                transform: translateY(100vh);
-                opacity: 0;
-            }
+        @keyframes twinkle {
+            0%, 100% { opacity: 0.2; }
+            50% { opacity: 1; }
         }
         
         @media (max-width: 768px) {
@@ -332,32 +384,91 @@
     <!-- Notification -->
     <div class="notification" id="notification">Username copied to clipboard!</div>
     
-    <!-- Floating stars -->
-    <div class="floating-stars" id="floatingStars"></div>
+    <!-- Custom Cursor -->
+    <div class="cursor" id="cursor"></div>
+    
+    <!-- Star Background -->
+    <div class="stars" id="stars"></div>
+    
+    <!-- Laser Trail Container -->
+    <div class="cursor-laser" id="laser"></div>
     
     <script>
-        // Create floating stars
-        function createFallingStar() {
-            const starsContainer = document.getElementById('floatingStars');
-            const star = document.createElement('div');
-            star.classList.add('star');
+        // Create star background
+        function createStars() {
+            const starsContainer = document.getElementById('stars');
+            const starsCount = 200;
             
-            // Random position
-            const left = Math.random() * 100;
-            star.style.left = `${left}%`;
-            
-            // Random fall duration
-            const duration = 2 + Math.random() * 8;
-            star.style.animation = `fall ${duration}s linear forwards`;
-            
-            // Add to container
-            starsContainer.appendChild(star);
-            
-            // Remove after animation completes
-            setTimeout(() => {
-                star.remove();
-            }, duration * 1000);
+            for (let i = 0; i < starsCount; i++) {
+                const star = document.createElement('div');
+                star.classList.add('star');
+                
+                // Random position
+                const left = Math.random() * 100;
+                const top = Math.random() * 100;
+                star.style.left = `${left}%`;
+                star.style.top = `${top}%`;
+                
+                // Random size
+                const size = Math.random() * 3;
+                star.style.width = `${size}px`;
+                star.style.height = `${size}px`;
+                
+                // Random animation duration
+                const duration = Math.random() * 5 + 5;
+                star.style.setProperty('--duration', `${duration}s`);
+                
+                // Random animation delay
+                star.style.animationDelay = `${Math.random() * 5}s`;
+                
+                starsContainer.appendChild(star);
+            }
         }
+        
+        // Custom cursor with laser trail
+        const cursor = document.getElementById('cursor');
+        const laserContainer = document.getElementById('laser');
+        let mouseX = 0;
+        let mouseY = 0;
+        let trail = [];
+        let trailLength = 20;
+        
+        // Initialize trail positions
+        for (let i = 0; i < trailLength; i++) {
+            trail.push({x: 0, y: 0});
+        }
+        
+        // Move cursor
+        document.addEventListener('mousemove', (e) => {
+            mouseX = e.clientX;
+            mouseY = e.clientY;
+            cursor.style.left = `${mouseX}px`;
+            cursor.style.top = `${mouseY}px`;
+            
+            // Create laser trail effect
+            const laser = document.createElement('div');
+            laser.classList.add('laser-trail');
+            laser.style.left = `${mouseX}px`;
+            laser.style.top = `${mouseY}px`;
+            laserContainer.appendChild(laser);
+            
+            // Remove laser dots after a delay
+            setTimeout(() => {
+                laser.style.opacity = '0';
+                setTimeout(() => {
+                    laser.remove();
+                }, 300);
+            }, 100);
+        });
+        
+        // Active state for cursor
+        document.addEventListener('mousedown', () => {
+            cursor.classList.add('active');
+        });
+        
+        document.addEventListener('mouseup', () => {
+            cursor.classList.remove('active');
+        });
         
         // Copy username function
         function copyUsername() {
@@ -392,8 +503,7 @@
         
         // Initialize effects
         window.onload = function() {
-            // Create initial falling stars
-            setInterval(createFallingStar, 300);
+            createStars();
         };
     </script>
 </body>
