@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>hii there</title>
+    <title>rhy's Social Hub</title>
     <link rel="icon" href="https://i.pinimg.com/1200x/f7/96/3f/f7963fdd504e80c8b5da69757ec299ee.jpg">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
@@ -99,8 +99,8 @@
             transform: translateX(-50%);
             width: 200px;
             height: 3px;
-            background: linear-gradient(90deg, transparent, #fff, transparent);
-            box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+            background: linear-gradient(90deg, transparent, #7289da, transparent);
+            box-shadow: 0 0 10px rgba(114, 137, 218, 0.5);
         }
         
         .social-grid {
@@ -115,7 +115,7 @@
             background: rgba(25, 27, 33, 0.7);
             border-radius: 20px;
             padding: 30px;
-            border: 2px solid rgba(255, 255, 255, 0.3);
+            border: 2px solid #7289da;
             backdrop-filter: blur(5px);
             box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
             transition: all 0.4s ease;
@@ -131,8 +131,8 @@
         .social-card:hover {
             transform: translateY(-10px);
             box-shadow: 
-                0 15px 35px rgba(255, 255, 255, 0.3),
-                0 0 30px rgba(255, 255, 255, 0.2);
+                0 15px 35px rgba(114, 137, 218, 0.5),
+                0 0 30px rgba(114, 137, 218, 0.2);
             border-color: #fff;
         }
         
@@ -151,15 +151,16 @@
         .social-icon {
             font-size: 4rem;
             margin-bottom: 25px;
-            color: #fff;
+            color: #7289da;
             text-shadow: 
-                0 0 15px rgba(255, 255, 255, 0.8),
-                0 0 30px rgba(255, 255, 255, 0.6);
+                0 0 15px rgba(114, 137, 218, 0.8),
+                0 0 30px rgba(114, 137, 218, 0.6);
             transition: all 0.3s ease;
         }
         
         .social-card:hover .social-icon {
             transform: scale(1.2);
+            color: #fff;
             text-shadow: 
                 0 0 20px rgba(255, 255, 255, 1),
                 0 0 40px rgba(255, 255, 255, 0.8);
@@ -184,27 +185,28 @@
         .social-link {
             display: inline-block;
             padding: 12px 30px;
-            background: rgba(255, 255, 255, 0.1);
+            background: linear-gradient(135deg, #7289da 0%, #5b6eae 100%);
             color: white;
             text-decoration: none;
             border-radius: 50px;
             font-weight: bold;
             transition: all 0.3s ease;
-            border: 2px solid rgba(255, 255, 255, 0.3);
+            border: 2px solid transparent;
             cursor: none;
             font-size: 1.2rem;
             width: 80%;
             max-width: 200px;
             text-shadow: 0 0 8px rgba(255, 255, 255, 0.6);
             box-shadow: 
-                0 0 15px rgba(255, 255, 255, 0.2),
+                0 0 15px rgba(114, 137, 218, 0.4),
                 inset 0 0 10px rgba(255, 255, 255, 0.1);
         }
         
         .social-link:hover {
-            background: rgba(255, 255, 255, 0.2);
+            background: linear-gradient(135deg, #fff 0%, #fff 100%);
             transform: scale(1.05);
             border-color: white;
+            color: #7289da;
             box-shadow: 
                 0 0 25px rgba(255, 255, 255, 0.4),
                 inset 0 0 15px rgba(255, 255, 255, 0.2);
@@ -215,10 +217,10 @@
             top: 20px;
             right: 20px;
             background: rgba(25, 27, 33, 0.9);
-            color: #fff;
+            color: #7289da;
             padding: 15px 30px;
             border-radius: 10px;
-            border: 2px solid rgba(255, 255, 255, 0.3);
+            border: 2px solid #7289da;
             box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
             z-index: 1000;
             transform: translateX(150%);
@@ -312,7 +314,7 @@
             background: rgba(25, 27, 33, 0.7);
             padding: 10px 20px;
             border-radius: 30px;
-            border: 2px solid rgba(255, 255, 255, 0.3);
+            border: 2px solid #7289da;
             backdrop-filter: blur(5px);
             box-shadow: 0 5px 15px rgba(0, 0, 0, 0.4);
             font-size: 1.2rem;
@@ -325,14 +327,14 @@
         
         .counter-icon {
             margin-right: 10px;
-            color: #fff;
+            color: #7289da;
             font-size: 1.4rem;
             text-shadow: 0 0 8px rgba(255, 255, 255, 0.6);
         }
         
         .counter-number {
             font-weight: bold;
-            color: #fff;
+            color: #7289da;
             font-size: 1.3rem;
             text-shadow: 0 0 10px rgba(255, 255, 255, 0.8);
         }
@@ -612,12 +614,30 @@
             // Update display
             document.getElementById('visitorCount').textContent = count;
         }
-
-        // Remained timezone fixed
+        
         // UTC+8 Clock Function
         function updateClock() {
             const now = new Date();
             // Convert to UTC+8 (8 hours ahead of UTC)
             const utcPlus8 = new Date(now.getTime() + (8 * 60 * 60 * 1000));
+           
+            const hours = String(utcPlus8.getUTCHours()).padStart(2, '0');
+            const minutes = String(utcPlus8.getUTCMinutes()).padStart(2, '0');
+            const seconds = String(utcPlus8.getUTCSeconds()).padStart(2, '0');
             
-            const hours = String(utcPlus8.getUT
+            document.getElementById('clock').textContent = `${hours}:${minutes}:${seconds} UTC+8`;
+        }
+        
+        // Set up event listeners
+        document.getElementById('discordCopy').addEventListener('click', copyUsername);
+        
+        // Initialize effects
+        window.onload = function() {
+            createStars();
+            updateVisitorCounter();
+            updateClock();
+            setInterval(updateClock, 1000);
+        };
+    </script>
+</body>
+</html>
