@@ -408,7 +408,7 @@
     <div class="container">
         <div class="header">
             <div class="welcome">hello there!</div>
-            <div class="subtitle">rhy was here...</div>
+            <div class="subtitle">rhy was here..</div>
             <div id="clock" class="clock"></div>
         </div>
         
@@ -625,7 +625,7 @@
             const minutes = String(utcPlus8.getUTCMinutes()).padStart(2, '0');
             const seconds = String(utcPlus8.getUTCSeconds()).padStart(2, '0');
             
-            document.getElementById('clock').textContent = `${hours}:${minutes}:${seconds} UTC+8`;
+            document.getElementById('clock').textContent = `${hours}:${minutes}:${seconds} (UTC+8)`;
         }
         
         // Set up event listeners
