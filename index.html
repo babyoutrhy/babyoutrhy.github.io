@@ -268,6 +268,35 @@
             animation: twinkle var(--duration) infinite ease-in-out;
         }
         
+        /* Visitor Counter */
+        .visitor-counter {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: rgba(25, 27, 33, 0.7);
+            padding: 10px 20px;
+            border-radius: 30px;
+            border: 2px solid #7289da;
+            backdrop-filter: blur(5px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.4);
+            font-size: 1.2rem;
+            display: flex;
+            align-items: center;
+            z-index: 100;
+        }
+        
+        .counter-icon {
+            margin-right: 10px;
+            color: #ffd700;
+            font-size: 1.4rem;
+        }
+        
+        .counter-number {
+            font-weight: bold;
+            color: #7289da;
+            font-size: 1.3rem;
+        }
+        
         @keyframes fadeIn {
             from { opacity: 0; }
             to { opacity: 1; }
@@ -302,6 +331,19 @@
             
             .social-username {
                 font-size: 1.2rem;
+            }
+            
+            .visitor-counter {
+                font-size: 1rem;
+                padding: 8px 15px;
+            }
+            
+            .counter-icon {
+                font-size: 1.2rem;
+            }
+            
+            .counter-number {
+                font-size: 1.1rem;
             }
         }
     </style>
@@ -393,6 +435,12 @@
     <!-- Laser Trail Container -->
     <div class="cursor-laser" id="laser"></div>
     
+    <!-- Visitor Counter -->
+    <div class="visitor-counter">
+        <i class="fas fa-users counter-icon"></i>
+        Visitors: <span class="counter-number" id="visitorCount">0</span>
+    </div>
+    
     <script>
         // Create star background
         function createStars() {
@@ -430,13 +478,6 @@
         const laserContainer = document.getElementById('laser');
         let mouseX = 0;
         let mouseY = 0;
-        let trail = [];
-        let trailLength = 20;
-        
-        // Initialize trail positions
-        for (let i = 0; i < trailLength; i++) {
-            trail.push({x: 0, y: 0});
-        }
         
         // Move cursor
         document.addEventListener('mousemove', (e) => {
@@ -498,12 +539,33 @@
             document.body.removeChild(tempTextArea);
         }
         
+        // Visitor counter
+        function updateVisitorCounter() {
+            // Get current count from localStorage
+            let count = localStorage.getItem('visitorCount');
+            
+            if (count === null) {
+                // First visit
+                count = 1;
+            } else {
+                // Increment count
+                count = parseInt(count) + 1;
+            }
+            
+            // Update localStorage
+            localStorage.setItem('visitorCount', count);
+            
+            // Update display
+            document.getElementById('visitorCount').textContent = count;
+        }
+        
         // Set up event listeners
         document.getElementById('discordCopy').addEventListener('click', copyUsername);
         
         // Initialize effects
         window.onload = function() {
             createStars();
+            updateVisitorCounter();
         };
     </script>
 </body>
