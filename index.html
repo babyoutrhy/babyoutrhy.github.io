@@ -306,25 +306,6 @@
             animation: twinkle var(--duration) infinite ease-in-out;
         }
         
-        /* Visitor Counter */
-        .visitor-counter {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            background: rgba(25, 27, 33, 0.7);
-            padding: 10px 20px;
-            border-radius: 30px;
-            border: 2px solid #7289da;
-            backdrop-filter: blur(5px);
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.4);
-            font-size: 1.2rem;
-            display: flex;
-            align-items: center;
-            z-index: 100;
-            color: #fff;
-            text-shadow: 0 0 8px rgba(255, 255, 255, 0.6);
-        }
-        
         .counter-icon {
             margin-right: 10px;
             color: #7289da;
@@ -386,11 +367,6 @@
             
             .social-icon {
                 font-size: 3rem;
-            }
-            
-            .visitor-counter {
-                font-size: 1rem;
-                padding: 8px 15px;
             }
             
             .counter-icon {
@@ -595,26 +571,6 @@
             document.body.removeChild(tempTextArea);
         }
         
-        // Visitor counter
-        function updateVisitorCounter() {
-            // Get current count from localStorage
-            let count = localStorage.getItem('visitorCount');
-            
-            if (count === null) {
-                // First visit
-                count = 1;
-            } else {
-                // Increment count
-                count = parseInt(count) + 1;
-            }
-            
-            // Update localStorage
-            localStorage.setItem('visitorCount', count);
-            
-            // Update display
-            document.getElementById('visitorCount').textContent = count;
-        }
-        
         // UTC+8 Clock Function
         function updateClock() {
             const now = new Date();
@@ -634,7 +590,6 @@
         // Initialize effects
         window.onload = function() {
             createStars();
-            updateVisitorCounter();
             updateClock();
             setInterval(updateClock, 1000);
         };
