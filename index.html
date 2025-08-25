@@ -565,11 +565,11 @@
             document.body.removeChild(tempTextArea);
         }
         
-        // UTC+8 Clock Function
+        // UTC+1 Clock Function
         function updateClock() {
             const now = new Date();
-            // Convert to UTC+8 (8 hours ahead of UTC)
-            const utcPlus8 = new Date(now.getTime() + (8 * 60 * 60 * 1000));
+            // Convert to UTC+1 (1 hours ahead of UTC)
+            const utcPlus1 = new Date(now.getTime() + (1 * 60 * 60 * 1000));
            
             const hours = String(utcPlus8.getUTCHours()).padStart(2, '0');
             const minutes = String(utcPlus8.getUTCMinutes()).padStart(2, '0');
