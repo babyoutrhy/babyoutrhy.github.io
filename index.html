@@ -565,17 +565,17 @@
             document.body.removeChild(tempTextArea);
         }
         
-        // UTC+1 Clock Function
+        // UTC+2 Clock Function
         function updateClock() {
             const now = new Date();
             // Convert to UTC+1 (1 hours ahead of UTC)
-            const utcPlus1 = new Date(now.getTime() + (1 * 60 * 60 * 1000));
+            const utcPlus2 = new Date(now.getTime() + (2 * 60 * 60 * 1000));
            
-            const hours = String(utcPlus1.getUTCHours()).padStart(2, '0');
-            const minutes = String(utcPlus1.getUTCMinutes()).padStart(2, '0');
-            const seconds = String(utcPlus1.getUTCSeconds()).padStart(2, '0');
+            const hours = String(utcPlus2.getUTCHours()).padStart(2, '0');
+            const minutes = String(utcPlus2.getUTCMinutes()).padStart(2, '0');
+            const seconds = String(utcPlus2.getUTCSeconds()).padStart(2, '0');
             
-            document.getElementById('clock').textContent = `${hours}:${minutes}:${seconds} (UTC+1)`;
+            document.getElementById('clock').textContent = `${hours}:${minutes}:${seconds} (UTC+2)`;
         }
         
         // Set up event listeners
