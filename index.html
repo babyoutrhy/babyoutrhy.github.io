@@ -16,7 +16,7 @@
         }
         
         body {
-            background: linear-gradient(135deg, #0c0e1a 0%, #1a0c2e 100%);
+            background: linear-gradient(135deg, #160909 0%, #250c0c 100%);
             color: #f0f0f0;
             min-height: 100vh;
             display: flex;
@@ -99,8 +99,8 @@
             transform: translateX(-50%);
             width: 200px;
             height: 3px;
-            background: linear-gradient(90deg, transparent, #7289da, transparent);
-            box-shadow: 0 0 10px rgba(114, 137, 218, 0.5);
+            background: linear-gradient(90deg, transparent, #ff0000, transparent);
+            box-shadow: 0 0 10px rgba(218, 114, 114, 0.5);
         }
         
         .social-grid {
@@ -112,10 +112,10 @@
         }
         
         .social-card {
-            background: rgba(25, 27, 33, 0.7);
+            background: rgba(33, 20, 20, 0.7);
             border-radius: 20px;
             padding: 30px;
-            border: 2px solid #7289da;
+            border: 2px solid #ff0000;
             backdrop-filter: blur(5px);
             box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
             transition: all 0.4s ease;
@@ -131,8 +131,8 @@
         .social-card:hover {
             transform: translateY(-10px);
             box-shadow: 
-                0 15px 35px rgba(114, 137, 218, 0.5),
-                0 0 30px rgba(114, 137, 218, 0.2);
+                0 15px 35px rgba(218, 114, 114, 0.5),
+                0 0 30px rgba(218, 114, 114, 0.2);
             border-color: #fff;
         }
         
@@ -151,10 +151,10 @@
         .social-icon {
             font-size: 4rem;
             margin-bottom: 25px;
-            color: #7289da;
+            color: #ff0000;
             text-shadow: 
-                0 0 15px rgba(114, 137, 218, 0.8),
-                0 0 30px rgba(114, 137, 218, 0.6);
+                0 0 15px rgba(218, 114, 114, 0.8),
+                0 0 30px rgba(218, 114, 114, 0.6);
             transition: all 0.3s ease;
         }
         
@@ -185,7 +185,7 @@
         .social-link {
             display: inline-block;
             padding: 12px 30px;
-            background: linear-gradient(135deg, #7289da 0%, #5b6eae 100%);
+            background: linear-gradient(135deg, #ff0000 0%, #ff0000 100%);
             color: white;
             text-decoration: none;
             border-radius: 50px;
@@ -198,7 +198,7 @@
             max-width: 200px;
             text-shadow: 0 0 8px rgba(255, 255, 255, 0.6);
             box-shadow: 
-                0 0 15px rgba(114, 137, 218, 0.4),
+                0 0 15px rgba(218, 114, 114, 0.4),
                 inset 0 0 10px rgba(255, 255, 255, 0.1);
         }
         
@@ -206,7 +206,7 @@
             background: linear-gradient(135deg, #fff 0%, #fff 100%);
             transform: scale(1.05);
             border-color: white;
-            color: #7289da;
+            color: #ff0000;
             box-shadow: 
                 0 0 25px rgba(255, 255, 255, 0.4),
                 inset 0 0 15px rgba(255, 255, 255, 0.2);
@@ -216,11 +216,11 @@
             position: fixed;
             top: 20px;
             right: 20px;
-            background: rgba(25, 27, 33, 0.9);
-            color: #7289da;
+            background: rgba(33, 20, 20, 0.9);
+            color: #ff0000;
             padding: 15px 30px;
             border-radius: 10px;
-            border: 2px solid #7289da;
+            border: 2px solid #ff0000;
             box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
             z-index: 1000;
             transform: translateX(150%);
@@ -236,53 +236,18 @@
         /* Custom Cursor Styles */
         .cursor {
             position: fixed;
-            width: 10px;
-            height: 10px;
-            background: white;
-            border-radius: 50%;
+            width: 32px;
+            height: 32px;
+            background: url('https://babyoutrhy.github.io/images/red_cursor.png') no-repeat center;
+            background-size: contain;
             pointer-events: none;
             z-index: 10000;
-            box-shadow: 0 0 15px rgba(255, 255, 255, 0.8);
             transform: translate(-50%, -50%);
-            transition: width 0.2s, height 0.2s;
+            transition: transform 0.1s;
         }
         
         .cursor.active {
-            width: 30px;
-            height: 30px;
-        }
-        
-        .cursor-trail {
-            position: fixed;
-            width: 6px;
-            height: 6px;
-            background: white;
-            border-radius: 50%;
-            pointer-events: none;
-            z-index: 9999;
-            opacity: 0.7;
-            box-shadow: 0 0 10px rgba(255, 255, 255, 0.6);
-            transform: translate(-50%, -50%);
-        }
-        
-        .cursor-laser {
-            position: fixed;
-            width: 100%;
-            height: 100%;
-            top: 0;
-            left: 0;
-            pointer-events: none;
-            z-index: 9998;
-        }
-        
-        .laser-trail {
-            position: absolute;
-            width: 4px;
-            height: 4px;
-            background: white;
-            border-radius: 50%;
-            box-shadow: 0 0 8px 2px rgba(255, 255, 255, 0.8);
-            opacity: 0.9;
+            transform: translate(-50%, -50%) scale(1.2);
         }
         
         /* Star Background */
@@ -298,24 +263,24 @@
         
         .star {
             position: absolute;
-            width: 3px;
-            height: 3px;
-            background: white;
-            border-radius: 50%;
-            box-shadow: 0 0 10px rgba(255, 255, 255, 0.8);
+            width: 15px;
+            height: 15px;
+            background: #ff0000;
+            border-radius: 100%;
+            box-shadow: 0 0 10px rgba(255, 0, 0, 0.8);
             animation: twinkle var(--duration) infinite ease-in-out;
         }
         
         .counter-icon {
             margin-right: 10px;
-            color: #7289da;
+            color: #ff0000;
             font-size: 1.4rem;
             text-shadow: 0 0 8px rgba(255, 255, 255, 0.6);
         }
         
         .counter-number {
             font-weight: bold;
-            color: #7289da;
+            color: #ff0000;
             font-size: 1.3rem;
             text-shadow: 0 0 10px rgba(255, 255, 255, 0.8);
         }
@@ -464,9 +429,6 @@
     <!-- Star Background -->
     <div class="stars" id="stars"></div>
     
-    <!-- Laser Trail Container -->
-    <div class="cursor-laser" id="laser"></div>
-    
     <script>
         // Create star background
         function createStars() {
@@ -499,9 +461,8 @@
             }
         }
         
-        // Custom cursor with laser trail
+        // Custom cursor
         const cursor = document.getElementById('cursor');
-        const laserContainer = document.getElementById('laser');
         let mouseX = 0;
         let mouseY = 0;
         
@@ -511,21 +472,6 @@
             mouseY = e.clientY;
             cursor.style.left = `${mouseX}px`;
             cursor.style.top = `${mouseY}px`;
-            
-            // Create laser trail effect
-            const laser = document.createElement('div');
-            laser.classList.add('laser-trail');
-            laser.style.left = `${mouseX}px`;
-            laser.style.top = `${mouseY}px`;
-            laserContainer.appendChild(laser);
-            
-            // Remove laser dots after a delay
-            setTimeout(() => {
-                laser.style.opacity = '0';
-                setTimeout(() => {
-                    laser.remove();
-                }, 300);
-            }, 100);
         });
         
         // Active state for cursor
@@ -568,7 +514,7 @@
         // UTC+2 Clock Function
         function updateClock() {
             const now = new Date();
-            // Convert to UTC+1 (1 hours ahead of UTC)
+            // Convert to UTC+2 (2 hours ahead of UTC)
             const utcPlus2 = new Date(now.getTime() + (2 * 60 * 60 * 1000));
            
             const hours = String(utcPlus2.getUTCHours()).padStart(2, '0');
