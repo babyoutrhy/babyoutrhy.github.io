@@ -3,301 +3,516 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>hii there</title>
+    <title>rhy's Myspace Profile</title>
     <link rel="icon" href="https://i.pinimg.com/1200x/f7/96/3f/f7963fdd504e80c8b5da69757ec299ee.jpg">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            cursor: none;
+            font-family: 'Press Start 2P', cursive;
+            cursor: url('https://cur.cursors-4u.net/games/gam-4/gam307.cur'), auto !important;
         }
         
         body {
-            background: linear-gradient(135deg, #160909 0%, #250c0c 100%);
-            color: #f0f0f0;
+            background: #000;
+            color: #00ff00;
             min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
             padding: 20px;
             overflow-x: hidden;
             position: relative;
         }
         
         .container {
-            max-width: 1200px;
+            max-width: 1000px;
             width: 100%;
-            z-index: 10;
+            margin: 0 auto;
+            border: 8px double #ff00ff;
+            background-color: rgba(0, 0, 0, 0.85);
+            padding: 20px;
             position: relative;
+            box-shadow: 0 0 30px #ff00ff;
         }
         
-        .header {
-            text-align: center;
-            margin-bottom: 50px;
-            animation: fadeIn 1.5s ease-out;
+        .profile-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 30px;
+            border-bottom: 3px dotted #ff00ff;
+            padding-bottom: 20px;
+        }
+        
+        .profile-pic {
+            width: 150px;
+            height: 150px;
+            border: 5px solid #00ff00;
+            margin-right: 20px;
+            background: url('https://i.pinimg.com/1200x/f7/96/3f/f7963fdd504e80c8b5da69757ec299ee.jpg') center/cover;
+            box-shadow: 0 0 15px #00ff00;
+        }
+        
+        .profile-info {
+            flex: 1;
+        }
+        
+        .profile-name {
+            font-size: 1.8rem;
+            color: #00ffff;
+            text-shadow: 0 0 10px #00ffff;
+            margin-bottom: 10px;
+            letter-spacing: 1px;
+        }
+        
+        .profile-status {
+            font-size: 0.9rem;
+            color: #ffff00;
+            margin-bottom: 10px;
+            text-shadow: 0 0 5px #ffff00;
+        }
+        
+        .profile-quote {
+            font-size: 0.8rem;
+            color: #ff00ff;
+            font-style: italic;
+            margin-bottom: 10px;
+            text-shadow: 0 0 5px #ff00ff;
+        }
+        
+        .profile-stats {
+            display: flex;
+            gap: 20px;
+            margin-top: 10px;
+        }
+        
+        .stat {
+            display: flex;
+            align-items: center;
+            font-size: 0.7rem;
+        }
+        
+        .stat i {
+            margin-right: 5px;
+            color: #ff00ff;
+        }
+        
+        .blink {
+            animation: blink 1s infinite;
+        }
+        
+        @keyframes blink {
+            0% { opacity: 1; }
+            50% { opacity: 0; }
+            100% { opacity: 1; }
         }
         
         .welcome {
-            font-size: 3.5rem;
-            margin-bottom: 10px;
-            color: #fff;
-            text-shadow: 
-                0 0 10px rgba(255, 255, 255, 0.8),
-                0 0 20px rgba(255, 255, 255, 0.6);
-            letter-spacing: 2px;
-            animation: glow 2s infinite alternate;
-        }
-        
-        .subtitle {
-            font-size: 2.5rem;
-            margin-bottom: 10px;
-            color: #fff;
-            text-shadow: 
-                0 0 10px rgba(255, 255, 255, 0.8),
-                0 0 20px rgba(255, 255, 255, 0.6);
-            font-weight: 300;
-            letter-spacing: 1px;
-        }
-        
-        .clock {
-            font-size: 2rem;
-            color: white;
-            text-shadow: 
-                0 0 10px rgba(255, 255, 255, 0.8),
-                0 0 20px rgba(255, 255, 255, 0.6);
-            letter-spacing: 1px;
-            margin-top: 10px;
-            animation: glow 2s infinite alternate;
-            font-weight: 300;
+            font-size: 1.5rem;
+            text-align: center;
+            margin: 20px 0;
+            color: #ffff00;
+            text-shadow: 0 0 10px #ffff00;
+            padding: 10px;
+            border: 2px dashed #ff00ff;
+            background-color: rgba(0, 0, 0, 0.7);
         }
         
         .social-section {
-            position: relative;
-            z-index: 10;
+            margin: 30px 0;
         }
         
-        .social-title {
-            font-size: 2.5rem;
-            margin-bottom: 40px;
-            color: #fff;
-            text-shadow: 
-                0 0 10px rgba(255, 255, 255, 0.8),
-                0 0 20px rgba(255, 255, 255, 0.6);
-            position: relative;
+        .section-title {
+            font-size: 1.5rem;
+            color: #00ffff;
+            text-shadow: 0 0 10px #00ffff;
+            margin-bottom: 20px;
+            padding: 5px 10px;
+            background: linear-gradient(to right, transparent, #ff00ff, transparent);
             text-align: center;
-            letter-spacing: 1px;
-        }
-        
-        .social-title::after {
-            content: '';
-            position: absolute;
-            bottom: -10px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 200px;
-            height: 3px;
-            background: linear-gradient(90deg, transparent, #ff0000, transparent);
-            box-shadow: 0 0 10px rgba(218, 114, 114, 0.5);
+            border-top: 2px solid #ff00ff;
+            border-bottom: 2px solid #ff00ff;
         }
         
         .social-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 30px;
-            max-width: 1200px;
-            margin: 0 auto;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
         }
         
         .social-card {
-            background: rgba(33, 20, 20, 0.7);
-            border-radius: 20px;
-            padding: 30px;
-            border: 2px solid #ff0000;
-            backdrop-filter: blur(5px);
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
-            transition: all 0.4s ease;
+            background: rgba(0, 0, 0, 0.8);
+            border: 3px solid #00ff00;
+            padding: 15px;
             position: relative;
-            overflow: hidden;
-            z-index: 10;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            text-align: center;
+            box-shadow: 0 0 15px #00ff00;
         }
         
         .social-card:hover {
-            transform: translateY(-10px);
-            box-shadow: 
-                0 15px 35px rgba(218, 114, 114, 0.5),
-                0 0 30px rgba(218, 114, 114, 0.2);
-            border-color: #fff;
+            transform: scale(1.02);
+            box-shadow: 0 0 20px #ff00ff;
+            border-color: #ff00ff;
         }
         
-        .social-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: url('') center/cover;
-            opacity: 0.1;
-            z-index: -1;
+        .social-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+            border-bottom: 1px dotted #ff00ff;
+            padding-bottom: 10px;
         }
         
         .social-icon {
-            font-size: 4rem;
-            margin-bottom: 25px;
-            color: #ff0000;
-            text-shadow: 
-                0 0 15px rgba(218, 114, 114, 0.8),
-                0 0 30px rgba(218, 114, 114, 0.6);
-            transition: all 0.3s ease;
-        }
-        
-        .social-card:hover .social-icon {
-            transform: scale(1.2);
-            color: #fff;
-            text-shadow: 
-                0 0 20px rgba(255, 255, 255, 1),
-                0 0 40px rgba(255, 255, 255, 0.8);
+            font-size: 2rem;
+            margin-right: 15px;
+            color: #ffff00;
+            text-shadow: 0 0 5px #ffff00;
         }
         
         .social-name {
-            font-size: 2rem;
-            margin-bottom: 15px;
-            color: #ffffff;
-            text-shadow: 0 0 10px rgba(255, 255, 255, 0.6);
+            font-size: 1.2rem;
+            color: #00ffff;
+            text-shadow: 0 0 5px #00ffff;
         }
         
         .social-username {
-            font-size: 1.6rem;
-            color: #e0e0e0;
-            margin-bottom: 25px;
-            font-style: italic;
-            min-height: 30px;
-            text-shadow: 0 0 8px rgba(255, 255, 255, 0.5);
+            font-size: 0.9rem;
+            color: #ff00ff;
+            margin: 10px 0;
+            text-shadow: 0 0 5px #ff00ff;
         }
         
         .social-link {
             display: inline-block;
-            padding: 12px 30px;
-            background: linear-gradient(135deg, #ff0000 0%, #ff0000 100%);
-            color: white;
+            padding: 8px 15px;
+            background: #000;
+            color: #00ff00;
             text-decoration: none;
-            border-radius: 50px;
-            font-weight: bold;
-            transition: all 0.3s ease;
-            border: 2px solid transparent;
-            cursor: none;
-            font-size: 1.2rem;
-            width: 80%;
-            max-width: 200px;
-            text-shadow: 0 0 8px rgba(255, 255, 255, 0.6);
-            box-shadow: 
-                0 0 15px rgba(218, 114, 114, 0.4),
-                inset 0 0 10px rgba(255, 255, 255, 0.1);
+            border: 2px solid #00ff00;
+            font-size: 0.8rem;
+            transition: all 0.3s;
+            text-align: center;
+            width: 100%;
+            margin-top: 10px;
         }
         
         .social-link:hover {
-            background: linear-gradient(135deg, #fff 0%, #fff 100%);
+            background: #00ff00;
+            color: #000;
+            box-shadow: 0 0 10px #00ff00;
+        }
+        
+        .about-me {
+            margin: 30px 0;
+            padding: 15px;
+            border: 3px solid #ffff00;
+            background: rgba(0, 0, 0, 0.8);
+            box-shadow: 0 0 15px #ffff00;
+        }
+        
+        .about-title {
+            font-size: 1.3rem;
+            color: #ffff00;
+            margin-bottom: 15px;
+            text-shadow: 0 0 5px #ffff00;
+            border-bottom: 1px dotted #ffff00;
+            padding-bottom: 5px;
+        }
+        
+        .about-content {
+            font-size: 0.8rem;
+            line-height: 1.5;
+            color: #00ff00;
+        }
+        
+        .music-player {
+            margin: 30px 0;
+            padding: 15px;
+            border: 3px solid #ff00ff;
+            background: rgba(0, 0, 0, 0.8);
+            box-shadow: 0 0 15px #ff00ff;
+        }
+        
+        .player-title {
+            font-size: 1.3rem;
+            color: #ff00ff;
+            margin-bottom: 15px;
+            text-shadow: 0 0 5px #ff00ff;
+            border-bottom: 1px dotted #ff00ff;
+            padding-bottom: 5px;
+        }
+        
+        .player-controls {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-top: 10px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        
+        .player-btn {
+            background: #000;
+            border: 2px solid #00ff00;
+            color: #00ff00;
+            padding: 8px 12px;
+            font-size: 0.7rem;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .player-btn:hover {
+            background: #00ff00;
+            color: #000;
+            box-shadow: 0 0 10px #00ff00;
+        }
+        
+        .player-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        
+        .player-btn:disabled:hover {
+            background: #000;
+            color: #00ff00;
+            box-shadow: none;
+        }
+        
+        .player-song {
+            font-size: 0.8rem;
+            color: #ffff00;
+            margin-top: 10px;
+            text-align: center;
+        }
+        
+        .progress-container {
+            width: 100%;
+            height: 20px;
+            background: #000;
+            border: 2px solid #00ff00;
+            margin: 15px 0;
+            position: relative;
+            box-shadow: 0 0 10px #00ff00;
+        }
+        
+        .progress-bar {
+            height: 100%;
+            background: #00ff00;
+            width: 0%;
+            transition: width 0.1s;
+        }
+        
+        .time-display {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.7rem;
+            color: #ff00ff;
+            margin-top: 5px;
+        }
+        
+        .volume-container {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-top: 10px;
+            justify-content: center;
+        }
+        
+        .volume-slider {
+            width: 100px;
+            -webkit-appearance: none;
+            height: 8px;
+            background: #000;
+            border: 1px solid #00ff00;
+            outline: none;
+        }
+        
+        .volume-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 15px;
+            height: 15px;
+            background: #ff00ff;
+            cursor: pointer;
+            box-shadow: 0 0 5px #ff00ff;
+        }
+        
+        .friends-section {
+            margin: 30px 0;
+        }
+        
+        .friends-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
+        }
+        
+        .friend {
+            text-align: center;
+            transition: transform 0.3s;
+        }
+        
+        .friend:hover {
             transform: scale(1.05);
-            border-color: white;
-            color: #ff0000;
-            box-shadow: 
-                0 0 25px rgba(255, 255, 255, 0.4),
-                inset 0 0 15px rgba(255, 255, 255, 0.2);
         }
         
-        .notification {
+        .friend-pic {
+            width: 80px;
+            height: 80px;
+            border: 2px solid #00ffff;
+            margin: 0 auto 5px;
+            background-size: cover;
+            background-position: center;
+            box-shadow: 0 0 10px #00ffff;
+        }
+        
+        .friend-name {
+            font-size: 0.7rem;
+            color: #ff00ff;
+        }
+        
+        .visitor-counter {
             position: fixed;
-            top: 20px;
-            right: 20px;
-            background: rgba(33, 20, 20, 0.9);
-            color: #ff0000;
-            padding: 15px 30px;
-            border-radius: 10px;
-            border: 2px solid #ff0000;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
-            z-index: 1000;
-            transform: translateX(150%);
-            transition: transform 0.4s ease;
-            font-size: 1.2rem;
-            text-shadow: 0 0 8px rgba(255, 255, 255, 0.6);
+            bottom: 10px;
+            right: 10px;
+            background: #000;
+            border: 2px solid #ffff00;
+            padding: 5px 10px;
+            font-size: 0.7rem;
+            color: #ffff00;
+            box-shadow: 0 0 10px #ffff00;
+            z-index: 100;
         }
         
-        .notification.show {
-            transform: translateX(0);
+        .marquee {
+            width: 100%;
+            overflow: hidden;
+            white-space: nowrap;
+            box-sizing: border-box;
+            background: #000;
+            border: 2px solid #ff00ff;
+            padding: 5px;
+            margin: 20px 0;
+            color: #00ff00;
+            font-size: 0.8rem;
         }
         
-        /* Custom Cursor Styles */
-        .cursor {
-            position: fixed;
-            width: 32px;
-            height: 32px;
-            background: url('https://babyoutrhy.github.io/images/red_cursor.png') no-repeat center;
-            background-size: contain;
-            pointer-events: none;
-            z-index: 10000;
-            transform: translate(-50%, -50%);
-            transition: transform 0.1s;
+        .marquee span {
+            display: inline-block;
+            padding-left: 100%;
+            animation: marquee 15s linear infinite;
         }
         
-        .cursor.active {
-            transform: translate(-50%, -50%) scale(1.2);
+        @keyframes marquee {
+            0% { transform: translate(0, 0); }
+            100% { transform: translate(-100%, 0); }
         }
         
-        /* Star Background */
-        .stars {
+        .comments-section {
+            margin: 30px 0;
+            border: 3px solid #00ffff;
+            padding: 15px;
+            background: rgba(0, 0, 0, 0.8);
+            box-shadow: 0 0 15px #00ffff;
+        }
+        
+        .comments-title {
+            font-size: 1.3rem;
+            color: #00ffff;
+            margin-bottom: 15px;
+            text-shadow: 0 0 5px #00ffff;
+            border-bottom: 1px dotted #00ffff;
+            padding-bottom: 5px;
+        }
+        
+        .comment {
+            border-bottom: 1px dotted #ff00ff;
+            padding: 10px 0;
+            margin-bottom: 10px;
+        }
+        
+        .comment-user {
+            font-size: 0.9rem;
+            color: #ffff00;
+            margin-bottom: 5px;
+        }
+        
+        .comment-text {
+            font-size: 0.8rem;
+            color: #00ff00;
+        }
+        
+        .comment-date {
+            font-size: 0.6rem;
+            color: #ff00ff;
+            margin-top: 5px;
+            text-align: right;
+        }
+        
+        .comment-form {
+            margin-top: 15px;
+        }
+        
+        .comment-input {
+            width: 100%;
+            background: #000;
+            border: 2px solid #00ff00;
+            color: #00ff00;
+            padding: 8px;
+            font-size: 0.8rem;
+            margin-bottom: 10px;
+        }
+        
+        .comment-submit {
+            background: #000;
+            border: 2px solid #ff00ff;
+            color: #ff00ff;
+            padding: 8px 15px;
+            font-size: 0.8rem;
+            cursor: pointer;
+        }
+        
+        .comment-submit:hover {
+            background: #ff00ff;
+            color: #000;
+        }
+        
+        .download-section {
+            margin: 20px 0;
+            padding: 10px;
+            border: 2px dashed #ffff00;
+            background: rgba(0, 0, 0, 0.7);
+            text-align: center;
+        }
+        
+        .download-link {
+            color: #ff00ff;
+            text-decoration: none;
+            font-size: 0.8rem;
+        }
+        
+        .download-link:hover {
+            text-decoration: underline;
+            color: #ffff00;
+        }
+        
+        /* Custom star background */
+        .star-background {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
+            z-index: -1;
             pointer-events: none;
-            z-index: 1;
         }
         
         .star {
             position: absolute;
-            width: 15px;
-            height: 15px;
-            background: #ff0000;
-            border-radius: 100%;
-            box-shadow: 0 0 10px rgba(255, 0, 0, 0.8);
-            animation: twinkle var(--duration) infinite ease-in-out;
-        }
-        
-        .counter-icon {
-            margin-right: 10px;
-            color: #ff0000;
-            font-size: 1.4rem;
-            text-shadow: 0 0 8px rgba(255, 255, 255, 0.6);
-        }
-        
-        .counter-number {
-            font-weight: bold;
-            color: #ff0000;
-            font-size: 1.3rem;
-            text-shadow: 0 0 10px rgba(255, 255, 255, 0.8);
-        }
-        
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
-        
-        @keyframes glow {
-            0% { text-shadow: 
-                    0 0 10px rgba(255, 255, 255, 0.8),
-                    0 0 20px rgba(255, 255, 255, 0.6); }
-            100% { text-shadow: 
-                    0 0 15px rgba(255, 255, 255, 1),
-                    0 0 30px rgba(255, 255, 255, 0.8),
-                    0 0 50px rgba(255, 255, 255, 0.6); }
+            background-color: #fff;
+            border-radius: 50%;
+            animation: twinkle 5s infinite;
         }
         
         @keyframes twinkle {
@@ -306,181 +521,383 @@
         }
         
         @media (max-width: 768px) {
-            .welcome {
-                font-size: 2.5rem;
+            .profile-header {
+                flex-direction: column;
+                text-align: center;
             }
             
-            .subtitle {
-                font-size: 1.8rem;
+            .profile-pic {
+                margin-right: 0;
+                margin-bottom: 15px;
             }
             
-            .clock {
-                font-size: 1.5rem;
+            .profile-stats {
+                justify-content: center;
             }
             
-            .social-title {
-                font-size: 2rem;
+            .social-grid {
+                grid-template-columns: 1fr;
             }
             
-            .social-name {
-                font-size: 1.6rem;
+            .player-controls {
+                gap: 5px;
             }
             
-            .social-username {
-                font-size: 1.2rem;
-            }
-            
-            .social-icon {
-                font-size: 3rem;
-            }
-            
-            .counter-icon {
-                font-size: 1.2rem;
-            }
-            
-            .counter-number {
-                font-size: 1.1rem;
+            .player-btn {
+                padding: 6px 8px;
+                font-size: 0.6rem;
             }
         }
     </style>
 </head>
 <body>
-    <!-- Container for content -->
+    <!-- Star Background -->
+    <div class="star-background" id="starBackground"></div>
+    
+    <!-- Visitor Counter -->
+    <div class="visitor-counter">
+        <i class="fas fa-eye"></i> Views: <span id="profileViews">246</span>
+    </div>
+    
     <div class="container">
-        <div class="header">
-            <div class="welcome">heya there!</div>
-            <div class="subtitle">welcome to my socials lmao</div>
-            <div id="clock" class="clock"></div>
+        <!-- Profile Header -->
+        <div class="profile-header">
+            <div class="profile-pic"></div>
+            <div class="profile-info">
+                <div class="profile-name">rhy</div>
+                <div class="profile-status"><span class="blink">●</span> Currently: Listening to The Colours Of My Life</div>
+                <div class="profile-quote">"Ahem, yeaa fakc yu,,!!!"</div>
+                <div class="profile-stats">
+                    <div class="stat"><i class="fas fa-users"></i> Friends: 61</div>
+                    <div class="stat"><i class="fas fa-calendar"></i> Joined: 10/2006</div>
+                </div>
+            </div>
         </div>
         
+        <!-- Welcome Message -->
+        <div class="welcome">
+            WELCOME TO MY PROFILE RAWR ^_^
+        </div>
+        
+        <!-- Marquee -->
+        <div class="marquee">
+            <span>ADD ME ON DISCORD: babyoutrhy * * * * CHECK OUT MY SPOTIFY PLAYLISTS!</span>
+        </div>
+        
+        <!-- Anonymous Comment -->
+        <div class="download-section">
+            <div class="comment">
+                <div class="comment-user">Anonymous 06/07/2007</div>
+                <div class="comment-text">
+                    <a href="#" class="download-link">Download No. 486186</a>
+                </div>
+            </div>
+        </div>
+        
+        <!-- About Me Section -->
+        <div class="about-me">
+            <div class="about-title">About Me</div>
+            <div class="about-content">
+                <p> What's up! I'm babyoutrhy but you can call me rhy >...< </p>
+                <p> I love to play ROBLOX, Call of Duty with my friends all day :> </p>
+                <p> I'd like to meet new friends, like you! DM me on Discord and we can chat and play together :D </p>
+            </div>
+        </div>
+        
+        <!-- Audio Player Section -->
+        <div class="music-player">
+            <div class="player-title">My Profile Song</div>
+            <div class="player-song" id="now-playing">The Colours Of My Life</div>
+            
+            <!-- Progress Bar -->
+            <div class="progress-container">
+                <div class="progress-bar" id="progress-bar"></div>
+            </div>
+            
+            <!-- Time Display -->
+            <div class="time-display">
+                <span id="current-time">0:00</span>
+                <span id="total-time">0:00</span>
+            </div>
+            
+            <!-- Player Controls -->
+            <div class="player-controls">
+                <button class="player-btn" id="prev-btn" title="Previous" disabled>
+                    <i class="fas fa-step-backward"></i>
+                </button>
+                <button class="player-btn" id="play-btn" title="Play">
+                    <i class="fas fa-play"></i>
+                </button>
+                <button class="player-btn" id="pause-btn" title="Pause" style="display: none;">
+                    <i class="fas fa-pause"></i>
+                </button>
+                <button class="player-btn" id="stop-btn" title="Stop">
+                    <i class="fas fa-stop"></i>
+                </button>
+                <button class="player-btn" id="next-btn" title="Next" disabled>
+                    <i class="fas fa-step-forward"></i>
+                </button>
+            </div>
+            
+            <!-- Volume Controls -->
+            <div class="volume-container">
+                <i class="fas fa-volume-down" style="color: #ff00ff;"></i>
+                <input type="range" min="0" max="100" value="80" class="volume-slider" id="volume-slider">
+                <i class="fas fa-volume-up" style="color: #ff00ff;"></i>
+            </div>
+            
+            <!-- Hidden Audio Element -->
+            <audio id="audio-player" preload="metadata">
+                <source src="https://babyoutrhy.github.io/music/TheColoursOfMyLife.mp3" type="audio/mpeg">
+                Your browser does not support the audio element.
+            </audio>
+        </div>
+        
+        <!-- Social Media Section -->
         <div class="social-section">
-            <div class="social-title">Socials</div>
+            <div class="section-title">My Socials</div>
             
             <div class="social-grid">
                 <!-- Instagram -->
                 <div class="social-card">
-                    <div class="social-icon">
-                        <i class="fab fa-instagram"></i>
+                    <div class="social-header">
+                        <div class="social-icon"><i class="fab fa-instagram"></i></div>
+                        <div class="social-name">Instagram</div>
                     </div>
-                    <div class="social-name">Instagram</div>
-                    <div class="social-username">babyoutrhy</div>
-                    <a href="https://instagram.com/babyoutrhy" target="_blank" class="social-link">Follow</a>
+                    <div class="social-username">@babyoutrhy</div>
+                    <a href="https://instagram.com/babyoutrhy" target="_blank" class="social-link">Follow Me!</a>
                 </div>
                 
                 <!-- GitHub -->
                 <div class="social-card">
-                    <div class="social-icon">
-                        <i class="fab fa-github"></i>
+                    <div class="social-header">
+                        <div class="social-icon"><i class="fab fa-github"></i></div>
+                        <div class="social-name">GitHub</div>
                     </div>
-                    <div class="social-name">GitHub</div>
-                    <div class="social-username">rhy</div>
-                    <a href="https://github.com/babyoutrhy" target="_blank" class="social-link">View repositories</a>
+                    <div class="social-username">babyoutrhy</div>
+                    <a href="https://github.com/babyoutrhy" target="_blank" class="social-link">View My Code</a>
                 </div>
                 
                 <!-- X (Twitter) -->
                 <div class="social-card">
-                    <div class="social-icon">
-                        <i class="fab fa-twitter"></i>
+                    <div class="social-header">
+                        <div class="social-icon"><i class="fab fa-twitter"></i></div>
+                        <div class="social-name">Twitter</div>
                     </div>
-                    <div class="social-name">X (Twitter)</div>
-                    <div class="social-username">babyoutrhy</div>
-                    <a href="https://x.com/babyoutrhy" target="_blank" class="social-link">Follow</a>
+                    <div class="social-username">@babyoutrhy</div>
+                    <a href="https://x.com/babyoutrhy" target="_blank" class="social-link">Follow Me!</a>
                 </div>
                 
                 <!-- Discord -->
                 <div class="social-card">
-                    <div class="social-icon">
-                        <i class="fab fa-discord"></i>
+                    <div class="social-header">
+                        <div class="social-icon"><i class="fab fa-discord"></i></div>
+                        <div class="social-name">Discord</div>
                     </div>
-                    <div class="social-name">Discord</div>
                     <div class="social-username">babyoutrhy</div>
                     <div class="social-link" id="discordCopy">Copy Username</div>
                 </div>
                 
                 <!-- Spotify -->
                 <div class="social-card">
-                    <div class="social-icon">
-                        <i class="fab fa-spotify"></i>
+                    <div class="social-header">
+                        <div class="social-icon"><i class="fab fa-spotify"></i></div>
+                        <div class="social-name">Spotify</div>
                     </div>
-                    <div class="social-name">Spotify</div>
                     <div class="social-username">rhy</div>
-                    <a href="https://open.spotify.com/user/973pu7wqhq7p7coa4euq61bvx" target="_blank" class="social-link">View profile and playlists</a>
+                    <a href="https://open.spotify.com/user/973pu7wqhq7p7coa4euq61bvx" target="_blank" class="social-link">My Playlists</a>
                 </div>
                 
                 <!-- SoundCloud -->
                 <div class="social-card">
-                    <div class="social-icon">
-                        <i class="fab fa-soundcloud"></i>
+                    <div class="social-header">
+                        <div class="social-icon"><i class="fab fa-soundcloud"></i></div>
+                        <div class="social-name">SoundCloud</div>
                     </div>
-                    <div class="social-name">SoundCloud</div>
                     <div class="social-username">rhy</div>
-                    <a href="https://soundcloud.com/babyoutrhy" target="_blank" class="social-link">View profile</a>
+                    <a href="https://soundcloud.com/babyoutrhy" target="_blank" class="social-link">My Tracks</a>
                 </div>
+            </div>
+        </div>
+        
+        <!-- Top Friends -->
+        <div class="friends-section">
+            <div class="section-title">Top Friends</div>
+            <div class="friends-grid">
+                <div class="friend">
+                    <div class="friend-pic" style="background-image: url('https://raw.githubusercontent.com/babyoutrhy/babyoutrhy.github.io/main/images/topfriends/stef.webp')"></div>
+                    <div class="friend-name">stef</div>
+                </div>
+                <div class="friend">
+                    <div class="friend-pic" style="background-image: url('https://raw.githubusercontent.com/babyoutrhy/babyoutrhy.github.io/main/images/topfriends/alyxnewman.webp')"></div>
+                    <div class="friend-name">alyxnewman</div>
+                </div>
+                <div class="friend">
+                    <div class="friend-pic" style="background-image: url('https://raw.githubusercontent.com/babyoutrhy/babyoutrhy.github.io/main/images/topfriends/angel.webp')"></div>
+                    <div class="friend-name">angel</div>
+                </div>
+                <div class="friend">
+                    <div class="friend-pic" style="background-image: url('https://raw.githubusercontent.com/babyoutrhy/babyoutrhy.github.io/main/images/topfriends/yaseen.webp')"></div>
+                    <div class="friend-name">yaseen</div>
+                </div>
+                <div class="friend">
+                    <div class="friend-pic" style="background-image: url('https://raw.githubusercontent.com/babyoutrhy/babyoutrhy.github.io/main/images/topfriends/roger.webp')"></div>
+                    <div class="friend-name">rogier</div>
+                </div>
+                <div class="friend">
+                    <div class="friend-pic" style="background-image: url('https://raw.githubusercontent.com/babyoutrhy/babyoutrhy.github.io/main/images/topfriends/majo.webp')"></div>
+                    <div class="friend-name">majo</div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Comments Section -->
+        <div class="comments-section">
+            <div class="comments-title">Comments</div>
+            
+            <div class="comment">
+                <div class="comment-user">SixtySeventhTime67</div>
+                <div class="comment-text">WHAT!! Can we play the new update on natural disaster on roblox?? PLSSS the new map looks so cool!! </div>
+                <div class="comment-date">Posted: 10/26/2007 4:20 PM</div>
+            </div>
+            
+            <div class="comment">
+                <div class="comment-user">LinkinParkFan49</div>
+                <div class="comment-text">YOOO! HOP ON COD W ME I'LL SLIDE YOU MY USERNAME :P</div>
+                <div class="comment-date">Posted: 10/25/2007 9:15 PM</div>
+            </div>
+            
+            <div class="comment">
+                <div class="comment-user">HeyWorldHiss</div>
+                <div class="comment-text">ssssSSSSssss... BOOM! Just kidding, cool profile XD :P</div>
+                <div class="comment-date">Posted: 10/24/2007 2:30 PM</div>
+            </div>
+            
+            <div class="comment-form">
+                <input type="text" class="comment-input" placeholder="Add a comment...">
+                <button class="comment-submit">Submit</button>
             </div>
         </div>
     </div>
     
-    <!-- Notification -->
-    <div class="notification" id="notification">Username copied to clipboard!</div>
-    
-    <!-- Custom Cursor -->
-    <div class="cursor" id="cursor"></div>
-    
-    <!-- Star Background -->
-    <div class="stars" id="stars"></div>
-    
     <script>
         // Create star background
         function createStars() {
-            const starsContainer = document.getElementById('stars');
-            const starsCount = 200;
+            const starContainer = document.getElementById('starBackground');
+            const starCount = 200;
             
-            for (let i = 0; i < starsCount; i++) {
+            for (let i = 0; i < starCount; i++) {
                 const star = document.createElement('div');
                 star.classList.add('star');
                 
                 // Random position
-                const left = Math.random() * 100;
-                const top = Math.random() * 100;
-                star.style.left = `${left}%`;
-                star.style.top = `${top}%`;
+                star.style.left = `${Math.random() * 100}%`;
+                star.style.top = `${Math.random() * 100}%`;
                 
                 // Random size
                 const size = Math.random() * 3;
                 star.style.width = `${size}px`;
                 star.style.height = `${size}px`;
                 
-                // Random animation duration
-                const duration = Math.random() * 5 + 5;
-                star.style.setProperty('--duration', `${duration}s`);
-                
                 // Random animation delay
                 star.style.animationDelay = `${Math.random() * 5}s`;
                 
-                starsContainer.appendChild(star);
+                starContainer.appendChild(star);
             }
         }
         
-        // Custom cursor
-        const cursor = document.getElementById('cursor');
-        let mouseX = 0;
-        let mouseY = 0;
+        // Audio Player Functionality
+        const audio = document.getElementById('audio-player');
+        const playBtn = document.getElementById('play-btn');
+        const pauseBtn = document.getElementById('pause-btn');
+        const stopBtn = document.getElementById('stop-btn');
+        const prevBtn = document.getElementById('prev-btn');
+        const nextBtn = document.getElementById('next-btn');
+        const progressBar = document.getElementById('progress-bar');
+        const currentTimeEl = document.getElementById('current-time');
+        const totalTimeEl = document.getElementById('total-time');
+        const volumeSlider = document.getElementById('volume-slider');
         
-        // Move cursor
-        document.addEventListener('mousemove', (e) => {
-            mouseX = e.clientX;
-            mouseY = e.clientY;
-            cursor.style.left = `${mouseX}px`;
-            cursor.style.top = `${mouseY}px`;
+        // Format time from seconds to MM:SS
+        function formatTime(seconds) {
+            const mins = Math.floor(seconds / 60);
+            const secs = Math.floor(seconds % 60);
+            return `${mins}:${secs < 10 ? '0' : ''}${secs}`;
+        }
+        
+        // Update progress bar and time display
+        function updateProgress() {
+            const currentTime = audio.currentTime;
+            const duration = audio.duration;
+            
+            if (duration) {
+                const progressPercent = (currentTime / duration) * 100;
+                progressBar.style.width = `${progressPercent}%`;
+                
+                currentTimeEl.textContent = formatTime(currentTime);
+                totalTimeEl.textContent = formatTime(duration);
+            }
+        }
+        
+        // Set progress bar on click
+        progressBar.parentElement.addEventListener('click', (e) => {
+            const progressContainer = e.currentTarget;
+            const clickX = e.offsetX;
+            const width = progressContainer.offsetWidth;
+            const duration = audio.duration;
+            
+            if (duration) {
+                audio.currentTime = (clickX / width) * duration;
+            }
         });
         
-        // Active state for cursor
-        document.addEventListener('mousedown', () => {
-            cursor.classList.add('active');
+        // Play audio
+        function playAudio() {
+            audio.play();
+            playBtn.style.display = 'none';
+            pauseBtn.style.display = 'inline-block';
+        }
+        
+        // Pause audio
+        function pauseAudio() {
+            audio.pause();
+            playBtn.style.display = 'inline-block';
+            pauseBtn.style.display = 'none';
+        }
+        
+        // Stop audio
+        function stopAudio() {
+            audio.pause();
+            audio.currentTime = 0;
+            playBtn.style.display = 'inline-block';
+            pauseBtn.style.display = 'none';
+        }
+        
+        // Set volume
+        function setVolume() {
+            audio.volume = volumeSlider.value / 100;
+        }
+        
+        // Event listeners
+        playBtn.addEventListener('click', playAudio);
+        pauseBtn.addEventListener('click', pauseAudio);
+        stopBtn.addEventListener('click', stopAudio);
+        volumeSlider.addEventListener('input', setVolume);
+        
+        // Update progress as audio plays
+        audio.addEventListener('timeupdate', updateProgress);
+        
+        // When audio ends, reset to play state
+        audio.addEventListener('ended', () => {
+            playBtn.style.display = 'inline-block';
+            pauseBtn.style.display = 'none';
+            progressBar.style.width = '0%';
+            currentTimeEl.textContent = '0:00';
         });
         
-        document.addEventListener('mouseup', () => {
-            cursor.classList.remove('active');
+        // When audio metadata is loaded, update total time
+        audio.addEventListener('loadedmetadata', () => {
+            totalTimeEl.textContent = formatTime(audio.duration);
         });
         
         // Copy username function
@@ -496,13 +913,7 @@
             try {
                 const successful = document.execCommand('copy');
                 if (successful) {
-                    // Show notification
-                    const notification = document.getElementById('notification');
-                    notification.classList.add('show');
-                    
-                    setTimeout(() => {
-                        notification.classList.remove('show');
-                    }, 3000);
+                    alert('Discord username copied to clipboard!');
                 }
             } catch (err) {
                 console.error('Failed to copy: ', err);
@@ -511,29 +922,48 @@
             document.body.removeChild(tempTextArea);
         }
 
-        // Set to an hour behind (from October 26 to March 29)
-        // UTC+1 Clock Function
-        function updateClock() {
-            const now = new Date();
-            // Convert to UTC+1 (1 hours ahead of UTC)
-            const utcPlus1 = new Date(now.getTime() + (1 * 60 * 60 * 1000));
-           
-            const hours = String(utcPlus1.getUTCHours()).padStart(1, '0');
-            const minutes = String(utcPlus1.getUTCMinutes()).padStart(1, '0');
-            const seconds = String(utcPlus1.getUTCSeconds()).padStart(1, '0');
-            
-            document.getElementById('clock').textContent = `${hours}:${minutes}:${seconds} (UTC+1)`;
-        }
-        
         // Set up event listeners
         document.getElementById('discordCopy').addEventListener('click', copyUsername);
         
-        // Initialize effects
-        window.onload = function() {
-            createStars();
-            updateClock();
-            setInterval(updateClock, 1000);
-        };
+        // Simple visitor counter (in a real app, this would be server-side)
+        let profileViews = parseInt(localStorage.getItem('profileViews')) || 246;
+        
+        // Update display
+        document.getElementById('profileViews').textContent = profileViews;
+        
+        // Store updated counts
+        localStorage.setItem('profileViews', profileViews);
+        
+        // Comment form functionality
+        document.querySelector('.comment-submit').addEventListener('click', function() {
+            const commentInput = document.querySelector('.comment-input');
+            const commentText = commentInput.value.trim();
+            
+            if (commentText) {
+                const commentsSection = document.querySelector('.comments-section');
+                const newComment = document.createElement('div');
+                newComment.className = 'comment';
+                
+                const now = new Date();
+                const dateString = `Posted: ${now.getMonth()+1}/${now.getDate()}/${now.getFullYear()} ${now.getHours()}:${now.getMinutes().toString().padStart(2, '0')} ${now.getHours() >= 12 ? 'PM' : 'AM'}`;
+                
+                newComment.innerHTML = `
+                    <div class="comment-user">Guest</div>
+                    <div class="comment-text">${commentText}</div>
+                    <div class="comment-date">${dateString}</div>
+                `;
+                
+                commentsSection.insertBefore(newComment, document.querySelector('.comment-form'));
+                commentInput.value = '';
+                
+                alert('rhy is too broke to get a domain for his own, wait for him to get one.');
+            } else {
+                alert('Please enter a comment!');
+            }
+        });
+        
+        // Initialize star background
+        createStars();
     </script>
 </body>
 </html>
