@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>rhy's Myspace Profile</title>
+    <title> Haiaiiaiai \^o^/</title>
     <link rel="icon" href="https://i.pinimg.com/1200x/f7/96/3f/f7963fdd504e80c8b5da69757ec299ee.jpg">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
@@ -23,6 +23,144 @@
             padding: 20px;
             overflow-x: hidden;
             position: relative;
+        }
+        
+        .emo-background {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            pointer-events: none;
+        }
+        
+        .doodle-border {
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 30%;
+            height: 100%;
+            overflow: hidden;
+        }
+        
+        .doodle {
+            position: absolute;
+            animation: float 8s infinite ease-in-out;
+        }
+        
+        .heart {
+            width: 40px;
+            height: 40px;
+            background: #ff00ff;
+            transform: rotate(45deg);
+            position: relative;
+            box-shadow: 0 0 20px #ff00ff;
+        }
+        
+        .heart:before, .heart:after {
+            content: '';
+            width: 40px;
+            height: 40px;
+            background: #ff00ff;
+            border-radius: 50%;
+            position: absolute;
+        }
+        
+        .heart:before {
+            top: -20px;
+            left: 0;
+        }
+        
+        .heart:after {
+            top: 0;
+            left: -20px;
+        }
+        
+        .star {
+            width: 0;
+            height: 0;
+            border-right: 25px solid transparent;
+            border-bottom: 17px solid #ffffff;
+            border-left: 25px solid transparent;
+            transform: rotate(35deg);
+            position: relative;
+            filter: drop-shadow(0 0 12px white);
+        }
+        
+        .star:before {
+            content: '';
+            width: 0;
+            height: 0;
+            border-right: 25px solid transparent;
+            border-bottom: 17px solid #ffffff;
+            border-left: 25px solid transparent;
+            position: absolute;
+            top: -12px;
+            left: -25px;
+            transform: rotate(-70deg);
+        }
+        
+        .star:after {
+            content: '';
+            width: 0;
+            height: 0;
+            border-right: 25px solid transparent;
+            border-bottom: 17px solid #ffffff;
+            border-left: 25px solid transparent;
+            position: absolute;
+            top: 0;
+            left: -25px;
+            transform: rotate(-35deg);
+        }
+        
+        .scribble {
+            width: 120px;
+            height: 16px;
+            background: transparent;
+            border: 4px solid #ff00ff;
+            border-radius: 50%;
+            position: relative;
+            transform: rotate(20deg);
+        }
+        
+        .scribble:before {
+            content: '';
+            position: absolute;
+            width: 90px;
+            height: 12px;
+            border: 3px solid #ffffff;
+            border-radius: 50%;
+            top: 24px;
+            left: 16px;
+            transform: rotate(-15deg);
+        }
+        
+        .scribble-2 {
+            width: 100px;
+            height: 14px;
+            background: transparent;
+            border: 3px solid #ffffff;
+            border-radius: 50%;
+            position: relative;
+            transform: rotate(-10deg);
+        }
+        
+        .scribble-2:before {
+            content: '';
+            position: absolute;
+            width: 70px;
+            height: 10px;
+            border: 3px solid #ff00ff;
+            border-radius: 50%;
+            top: 20px;
+            left: 12px;
+            transform: rotate(25deg);
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            50% { transform: translateY(-15px) rotate(5deg); }
         }
         
         .container {
@@ -49,7 +187,7 @@
             height: 150px;
             border: 5px solid #00ff00;
             margin-right: 20px;
-            background: url('https://i.pinimg.com/1200x/f7/96/3f/f7963fdd504e80c8b5da69757ec299ee.jpg') center/cover;
+            background: url('https://raw.githubusercontent.com/babyoutrhy/babyoutrhy.github.io/main/images/penguinbluecostume.jpg') center/cover;
             box-shadow: 0 0 15px #00ff00;
         }
         
@@ -497,27 +635,20 @@
             color: #ffff00;
         }
         
-        /* Custom star background */
-        .star-background {
+        /* New styles for the right-side GIF */
+        .gif-container {
             position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
+            top: 50%;
+            right: 20px;
+            transform: translateY(-50%);
             z-index: -1;
             pointer-events: none;
         }
         
-        .star {
-            position: absolute;
-            background-color: #fff;
-            border-radius: 50%;
-            animation: twinkle 5s infinite;
-        }
-        
-        @keyframes twinkle {
-            0%, 100% { opacity: 0.2; }
-            50% { opacity: 1; }
+        .nya-gif {
+            width: 300px;
+            border: 3px solid #ff00ff;
+            box-shadow: 0 0 15px #ff00ff;
         }
         
         @media (max-width: 768px) {
@@ -547,16 +678,50 @@
                 padding: 6px 8px;
                 font-size: 0.6rem;
             }
+            
+            .gif-container {
+                right: 10px;
+            }
+            
+            .nya-gif {
+                width: 200px;
+            }
+            
+            .doodle-border {
+                width: 50%;
+            }
         }
     </style>
 </head>
 <body>
-    <!-- Star Background -->
-    <div class="star-background" id="starBackground"></div>
+<div class="emo-background">
+    <div class="doodle-border">
+        <!-- Fixed doodles on left side -->
+        <div class="doodle heart" style="top: 10%; left: 5%; animation-delay: 0s;"></div>
+        <div class="doodle star" style="top: 15%; left: 15%; animation-delay: 1s;"></div>
+        <div class="doodle scribble" style="top: 25%; left: 8%; animation-delay: 2s;"></div>
+        <div class="doodle scribble-2" style="top: 35%; left: 12%; animation-delay: 3s;"></div>
+        
+        <div class="doodle heart" style="top: 45%; left: 7%; animation-delay: 4s;"></div>
+        <div class="doodle star" style="top: 55%; left: 18%; animation-delay: 0.5s;"></div>
+        <div class="doodle scribble" style="top: 65%; left: 10%; animation-delay: 1.5s;"></div>
+        <div class="doodle scribble-2" style="top: 75%; left: 15%; animation-delay: 2.5s;"></div>
+        
+        <div class="doodle heart" style="top: 85%; left: 5%; animation-delay: 3.5s;"></div>
+        <div class="doodle star" style="top: 90%; left: 20%; animation-delay: 0.8s;"></div>
+        <div class="doodle scribble" style="top: 20%; left: 25%; animation-delay: 1.8s;"></div>
+        <div class="doodle scribble-2" style="top: 40%; left: 22%; animation-delay: 2.8s;"></div>
+    </div>
+</div>
+
+<!-- Right side GIF -->
+<div class="gif-container">
+    <img src="https://raw.githubusercontent.com/babyoutrhy/babyoutrhy.github.io/main/gif/nya.gif" alt="Nya" class="nya-gif">
+</div>
     
     <!-- Visitor Counter -->
     <div class="visitor-counter">
-        <i class="fas fa-eye"></i> Views: <span id="profileViews">246</span>
+        <i class="fas fa-eye"></i> Views: <span id="profileViews">8761</span>
     </div>
     
     <div class="container">
@@ -565,10 +730,10 @@
             <div class="profile-pic"></div>
             <div class="profile-info">
                 <div class="profile-name">rhy</div>
-                <div class="profile-status"><span class="blink">●</span> Currently: Listening to The Colours Of My Life</div>
+                <div class="profile-status"><span class="blink">●</span> Currently sleeping..</div>
                 <div class="profile-quote">"Ahem, yeaa fakc yu,,!!!"</div>
                 <div class="profile-stats">
-                    <div class="stat"><i class="fas fa-users"></i> Friends: 61</div>
+                    <div class="stat"><i class="fas fa-users"></i> Friends: 127</div>
                     <div class="stat"><i class="fas fa-calendar"></i> Joined: 10/2006</div>
                 </div>
             </div>
@@ -576,18 +741,18 @@
         
         <!-- Welcome Message -->
         <div class="welcome">
-            WELCOME TO MY PROFILE RAWR ^_^
+            WELCOME TO MY PROFILE RAWR ( •̀ ω •́ )✧
         </div>
         
         <!-- Marquee -->
         <div class="marquee">
-            <span>ADD ME ON DISCORD: babyoutrhy * * * * CHECK OUT MY SPOTIFY PLAYLISTS!</span>
+            <span>ADD ME ON DISCORD: babyoutrhy * * * * CHECK OUT MY G59 PLAYLIST ON SPOTIFY!</span>
         </div>
         
         <!-- Anonymous Comment -->
         <div class="download-section">
             <div class="comment">
-                <div class="comment-user">Anonymous 06/07/2007</div>
+                <div class="comment-user">Anonymous 06/07/2014</div>
                 <div class="comment-text">
                     <a href="#" class="download-link">Download No. 486186</a>
                 </div>
@@ -598,9 +763,9 @@
         <div class="about-me">
             <div class="about-title">About Me</div>
             <div class="about-content">
-                <p> What's up! I'm babyoutrhy but you can call me rhy >...< </p>
-                <p> I love to play ROBLOX, Call of Duty with my friends all day :> </p>
-                <p> I'd like to meet new friends, like you! DM me on Discord and we can chat and play together :D </p>
+                <p>What's up! I'm babyoutrhy but you can call me rhy >...< </p>
+                <p>I like coding, playing and especially, producing music on FL Studio!</p>
+                <p>I'd like to meet new friends, like you! DM me on Discord and we can chat and play together :D</p>
             </div>
         </div>
         
@@ -733,18 +898,6 @@
                     <div class="friend-name">alyxnewman</div>
                 </div>
                 <div class="friend">
-                    <div class="friend-pic" style="background-image: url('https://raw.githubusercontent.com/babyoutrhy/babyoutrhy.github.io/main/images/topfriends/angel.webp')"></div>
-                    <div class="friend-name">angel</div>
-                </div>
-                <div class="friend">
-                    <div class="friend-pic" style="background-image: url('https://raw.githubusercontent.com/babyoutrhy/babyoutrhy.github.io/main/images/topfriends/yaseen.webp')"></div>
-                    <div class="friend-name">yaseen</div>
-                </div>
-                <div class="friend">
-                    <div class="friend-pic" style="background-image: url('https://raw.githubusercontent.com/babyoutrhy/babyoutrhy.github.io/main/images/topfriends/roger.webp')"></div>
-                    <div class="friend-name">rogier</div>
-                </div>
-                <div class="friend">
                     <div class="friend-pic" style="background-image: url('https://raw.githubusercontent.com/babyoutrhy/babyoutrhy.github.io/main/images/topfriends/majo.webp')"></div>
                     <div class="friend-name">majo</div>
                 </div>
@@ -757,20 +910,20 @@
             
             <div class="comment">
                 <div class="comment-user">SixtySeventhTime67</div>
-                <div class="comment-text">WHAT!! Can we play the new update on natural disaster on roblox?? PLSSS the new map looks so cool!! </div>
-                <div class="comment-date">Posted: 10/26/2007 4:20 PM</div>
+                <div class="comment-text">can we collab an edm track ^_^</div>
+                <div class="comment-date">Posted: 10/26/2007 4:26 PM</div>
             </div>
             
             <div class="comment">
-                <div class="comment-user">LinkinParkFan49</div>
-                <div class="comment-text">YOOO! HOP ON COD W ME I'LL SLIDE YOU MY USERNAME :P</div>
-                <div class="comment-date">Posted: 10/25/2007 9:15 PM</div>
+                <div class="comment-user">SavedHerFromTheBridge</div>
+                <div class="comment-text">waaahhh x_x wooowow..</div>
+                <div class="comment-date">Posted: 10/25/2007 9:13 PM</div>
             </div>
             
             <div class="comment">
                 <div class="comment-user">HeyWorldHiss</div>
-                <div class="comment-text">ssssSSSSssss... BOOM! Just kidding, cool profile XD :P</div>
-                <div class="comment-date">Posted: 10/24/2007 2:30 PM</div>
+                <div class="comment-text">ssssSSSSssss... BOOM! Just kidding, cool profile! :P</div>
+                <div class="comment-date">Posted: 10/24/2007 2:38 PM</div>
             </div>
             
             <div class="comment-form">
@@ -781,31 +934,6 @@
     </div>
     
     <script>
-        // Create star background
-        function createStars() {
-            const starContainer = document.getElementById('starBackground');
-            const starCount = 200;
-            
-            for (let i = 0; i < starCount; i++) {
-                const star = document.createElement('div');
-                star.classList.add('star');
-                
-                // Random position
-                star.style.left = `${Math.random() * 100}%`;
-                star.style.top = `${Math.random() * 100}%`;
-                
-                // Random size
-                const size = Math.random() * 3;
-                star.style.width = `${size}px`;
-                star.style.height = `${size}px`;
-                
-                // Random animation delay
-                star.style.animationDelay = `${Math.random() * 5}s`;
-                
-                starContainer.appendChild(star);
-            }
-        }
-        
         // Audio Player Functionality
         const audio = document.getElementById('audio-player');
         const playBtn = document.getElementById('play-btn');
@@ -925,8 +1053,8 @@
         // Set up event listeners
         document.getElementById('discordCopy').addEventListener('click', copyUsername);
         
-        // Simple visitor counter (in a real app, this would be server-side)
-        let profileViews = parseInt(localStorage.getItem('profileViews')) || 246;
+        // Simple visitor counter (Local storage.. I'm too broke to get my own domain..)
+        let profileViews = parseInt(localStorage.getItem('profileViews')) || 8761;
         
         // Update display
         document.getElementById('profileViews').textContent = profileViews;
@@ -956,14 +1084,11 @@
                 commentsSection.insertBefore(newComment, document.querySelector('.comment-form'));
                 commentInput.value = '';
                 
-                alert('rhy is too broke to get a domain for his own, wait for him to get one.');
+                alert('Wait for rhy get his own domain to make the comment visible to everyone cause he a brokie');
             } else {
                 alert('Please enter a comment!');
             }
         });
-        
-        // Initialize star background
-        createStars();
     </script>
 </body>
 </html>
