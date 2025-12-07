@@ -1,0 +1,1095 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>// 为什么..</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"><circle cx="8" cy="8" r="7" fill="darkred"/></svg>'), auto;
+        }
+
+        body {
+            background-color: #000;
+            color: #8b0000;
+            font-family: 'Courier New', monospace;
+            overflow-x: hidden;
+            overflow-y: scroll;
+            min-height: 900vh;
+            position: relative;
+            background-image: 
+                radial-gradient(circle at 10% 20%, rgba(139, 0, 0, 0.1) 0%, transparent 20%),
+                radial-gradient(circle at 90% 80%, rgba(0, 0, 0, 0.5) 0%, transparent 20%),
+                repeating-linear-gradient(
+                    0deg,
+                    transparent,
+                    transparent 2px,
+                    rgba(0, 0, 0, 0.1) 2px,
+                    rgba(0, 0, 0, 0.1) 4px
+                );
+        }
+
+        .glitch {
+            animation: glitch 3s infinite;
+        }
+
+        @keyframes glitch {
+            0% { transform: translate(0); opacity: 1; }
+            1% { transform: translate(-2px, 1px); opacity: 0.8; }
+            2% { transform: translate(1px, -2px); opacity: 0.9; }
+            3% { transform: translate(0); opacity: 1; }
+        }
+
+        .flicker {
+            animation: flicker 0.2s infinite;
+        }
+
+        @keyframes flicker {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.3; }
+        }
+
+        .slow-flicker {
+            animation: slow-flicker 4s infinite;
+        }
+
+        @keyframes slow-flicker {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.1; }
+        }
+
+        .text-container {
+            position: absolute;
+            padding: 15px;
+            white-space: pre-wrap;
+            font-size: 13px;
+            line-height: 1.3;
+            border: 1px solid rgba(139, 0, 0, 0.3);
+            background: rgba(20, 0, 0, 0.2);
+            max-width: 320px;
+            color: #b22222;
+        }
+
+        .pain {
+            color: #dc143c;
+            border-color: #dc143c;
+            background: rgba(50, 0, 0, 0.3);
+        }
+
+        .memory {
+            color: #4682b4;
+            border-color: #4682b4;
+            background: rgba(0, 20, 40, 0.2);
+        }
+
+        .despair {
+            color: #800000;
+            border-color: #800000;
+            background: rgba(30, 0, 0, 0.4);
+            font-weight: bold;
+        }
+
+        .latin {
+            font-family: 'Times New Roman', serif;
+            color: #9370db;
+            border-color: #9370db;
+            background: rgba(40, 0, 40, 0.2);
+        }
+
+        .chinese {
+            font-family: 'SimSun', 'MS Gothic', monospace;
+            font-size: 14px;
+            color: #ff4500;
+            border-color: #ff4500;
+            background: rgba(40, 20, 0, 0.2);
+        }
+
+        .japanese {
+            font-family: 'MS Gothic', 'SimSun', monospace;
+            font-size: 14px;
+            color: #20b2aa;
+            border-color: #20b2aa;
+            background: rgba(0, 30, 30, 0.2);
+        }
+
+        .hebrew {
+            font-family: 'Arial', 'David', sans-serif;
+            font-size: 14px;
+            color: #daa520;
+            border-color: #daa520;
+            background: rgba(40, 40, 0, 0.2);
+            direction: rtl;
+            text-align: right;
+        }
+
+        .blood-drip {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                linear-gradient(to bottom, transparent 95%, rgba(139, 0, 0, 0.05) 100%),
+                linear-gradient(to right, transparent 95%, rgba(139, 0, 0, 0.05) 100%);
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        .vertical-lines {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: repeating-linear-gradient(
+                to right,
+                transparent,
+                transparent 50px,
+                rgba(139, 0, 0, 0.05) 50px,
+                rgba(139, 0, 0, 0.05) 52px
+            );
+            pointer-events: none;
+            z-index: -1;
+        }
+    </style>
+</head>
+<body>
+    <div class="blood-drip"></div>
+    <div class="vertical-lines"></div>
+
+    <div class="text-container glitch" style="top: 2%; left: 2%; font-size: 36px; z-index: 10;">
+        //ארכיולמה היא חייבת לעשות את זה..
+    </div>
+
+    <div class="text-container hebrew despair flicker" style="top: 10%; right: 40%;">
+        ראיתי אותם היום ביחד.
+        הוא החזיק לה את היד.
+        היא חייכה אליו כמו שהיא נהגה לחייך אליי.
+        החיוך הזה היה פעם שלי.
+        הכל היה פעם שלי.
+        עכשיו הכל נעלם.
+        היא נעלמה.
+        אני עדיין כאן.
+        אני לא יודע למה אני עדיין כאן.
+        אף אחד לא ישים לב אם אני לא אהיה.
+        היא בטוח לא תשים לב.
+        יש לה אותו עכשיו.
+        היא לא צריכה אותי.
+        היא בטח אפילו לא חושבת עליי.
+        למה שתחשוב?
+        אני רק רוח רפאים שהיא הכירה פעם.
+        בקרוב אני אהיה רוח רפאים אמיתית.
+        אולי אז היא תזכור אותי.
+        אולי אז יהיה לה אכפת.
+        או אולי עדיין לא יהיה.
+        זה החלק הכי גרוע.
+        הגרוע מכל.
+        הכדורים נמצאים על השיש בחדר האמבטיה.
+        אני בוהה בהם כבר שעה.
+        הם נראים כל כך שלווים.
+        רק הבטחות לבנות קטנות של שתיקה.
+        לא עוד מחשבות.
+        לא עוד זיכרונות.
+        לא עוד לראות אותם ביחד.
+        לא עוד לתהות למה אני לא מספיק.
+        זה יהיה כל כך קל.
+        רק לבלוע ולחכות.
+        לחכות לכלום.
+        הכלום היפה.
+    </div>
+
+    <div class="text-container hebrew pain slow-flicker" style="top: 25%; left: 5%;">
+        אני ממשיך לבדוק את המדיה החברתית שלה.
+        זה כמו לגרד פצע.
+        אני יודע שזה רע בשבילי.
+        אני יודע שזה הופך הכל לגרוע יותר.
+        אבל אני לא יכול להפסיק.
+        הנה הם שוב.
+        באיזה מסעדה שאני לא יכול להרשות לעצמי.
+        מחייכים. תמיד מחייכים.
+        היא אף פעם לא חייכה ככה איתי.
+        לא בסוף בכל מקרה.
+        בסוף היא רק נראתה עייפה.
+        עייפה ממני.
+        עייפה מאיתנו.
+        עייפה מלנסות.
+        עכשיו היא נראית שוב בחיים.
+        הוא החזיר אותה לחיים.
+        אני הרגתי אותה.
+        הוא מציל אותה.
+        ממני.
+        אולי אני צריך להודות לו.
+        אולי אני צריך לשנוא אותו.
+        אני חושב שאני פשוט שונא את עצמי.
+        על זה שאני לא הוא.
+        על זה שאני לא מספיק.
+        על זה שאני אני.
+        האדם הלא נכון.
+        הטעות.
+        זה שהיא הייתה צריכה לסבול.
+        עד שהיא מצאה את האדם הנכון.
+        עד שהיא מצאה אותו.
+        עד שהיא הייתה חופשייה ממני.
+        עכשיו אני צריך להיות חופשי גם.
+        חופשי מהכל.
+        במיוחד חופשי מעצמי.
+    </div>
+
+    <div class="text-container latin glitch" style="top: 20%; left: 60%;">
+        illa cum altero est.
+        manum eius tenet.
+        ridet ad eum sicut ad me ridere solebat.
+        ille risus meus erat.
+        omnia mea erant.
+        nunc omnia abierunt.
+        illa abiit.
+        ego hic adhuc sum.
+        nescio cur hic adhuc sum.
+        nemo notaret si non essem.
+        illa certe non.
+        illum nunc habet.
+        me non indiget.
+        fortasse de me ne cogitat quidem.
+        cur cogitaret?
+        umbra tantum sum quam aliquando cognovit.
+        mox vera umbra ero.
+        tum fortasse mei meminerit.
+        tum fortasse curabit.
+        aut fortasse etiam non curabit.
+        hoc pessimum est.
+        hoc quod me necat.
+        illa felix est.
+        ego nihil sum.
+        nihil inane vacuum.
+        non iam vivere volo.
+        sed ne mori quidem possum.
+        inter utrumque haereo.
+        in doloris aeterno.
+        in amoris memoria.
+        in solitudine perfecta.
+    </div>
+
+    <div class="text-container chinese flicker" style="top: 50%; left: 10%;">
+        我今天看到他们在一起。
+        他牵着她的手。
+        她对他笑，就像以前对我笑一样。
+        那个笑容曾经是我的。
+        一切曾经都是我的。
+        现在都没了。
+        她走了。
+        我还在这里。
+        我不知道为什么我还在这里。
+        没人会注意到我不在。
+        她肯定不会。
+        她现在有他了。
+        她不需要我。
+        她可能根本不想我。
+        为什么要想起我？
+        我只是她曾经认识的一个鬼魂。
+        很快我就会变成真的鬼魂。
+        也许那时她会记得我。
+        也许那时她会在意。
+        或者也许她还是不会。
+        这才是最糟的。
+        药在浴室柜子上。
+        我已经盯着它们看了一个小时。
+        它们看起来很平静。
+        只是小小的白色沉默承诺。
+        不再有想法。
+        不再有记忆。
+        不再看到他们在一起。
+        不再想为什么我不够好。
+        这太容易了。
+        吞下去然后等待。
+        等待虚无。
+        美丽的虚无。
+    </div>
+
+    <div class="text-container japanese slow-flicker" style="top: 60%; right: 20%;">
+        今日彼らが一緒にいるのを見た。
+        彼が彼女の手を握っていた。
+        彼女は以前私に笑いかけたように彼に笑いかけていた。
+        あの笑顔は私のものだった。
+        全ては私のものだった。
+        今はすべてなくなった。
+        彼女は去った。
+        私はまだここにいる。
+        なぜまだここにいるのかわからない。
+        私がいなくても誰も気づかない。
+        彼女は絶対に気づかない。
+        彼女は今彼がいる。
+        彼女は私を必要としない。
+        彼女はおそらく私のことなど考えてもいない。
+        なぜ考えるだろう？
+        私は彼女がかつて知っていた幽霊に過ぎない。
+        すぐに私は本当の幽霊になる。
+        多分その時彼女は私を覚えているだろう。
+        多分その時彼女は気にかけるだろう。
+        あるいは多分それでも気にかけないだろう。
+        それが一番悪い。
+        浴室のカウンターに薬がある。
+        一時間もそれを見つめている。
+        とても平和に見える。
+        ただの小さな白い沈黙の約束。
+        もう考えなくていい。
+        もう記憶しなくていい。
+        もう彼らが一緒にいるのを見なくていい。
+        なぜ私で十分ではなかったか考えなくていい。
+        とても簡単だ。
+        飲み込んで待つだけ。
+        無を待つ。
+        美しい無を。
+    </div>
+
+    <div class="text-container hebrew despair" style="bottom: 20%; left: 30%;">
+        לפעמים אני חושב איך זה יקרה.
+        הפתק. מה אני בכלל אכתוב?
+        "סליחה על הבלגן" נשמע קלישאתי.
+        "תגיד לה שאהבתי אותה" נשמע פתטי.
+        אולי כלום.
+        אולי זה מתאים.
+        נכנסתי לעולם הזה עם כלום.
+        אצא ממנו עם כלום.
+        היא נתנה לי הכל ואז לקחה הכל.
+        אולי זאת אהבה.
+        לתת למישהו את הכוח להשמיד אותך.
+        ואז להיות מופתע כשהם עושים את זה.
+        אני כבר לא מופתע.
+        פשוט עייף.
+        כל כך עייף מלנשום.
+        עייף מלהעמיד פנים.
+        עייף מלהסתכל על הפרצופים שלהם בכל מקום.
+        עייף מלהיות אני.
+        עייף מלהתקיים.
+        פשוט כל כך עייף לעזאזל.
+        העולם בחוץ ממשיך.
+        זוגות צוחקים.
+        אנשים חיים.
+        אני גוסס לאט.
+        מבפנים החוצה.
+        קצת אחרי קצת.
+        יום אחרי יום.
+        אף אחד לא שם לב.
+        למה שהם ישימו לב?
+        אני רק עוד אדם שבור.
+        בעוד חדר שבור.
+        חושב עוד מחשבה שבורה.
+        בקרוב אהיה שבור לגמרי.
+        ואז סוף סוף שקט.
+        סוף סוף שלווה.
+        סוף סוף חופש.
+        חופש מהכל.
+        במיוחד חופש מעצמי.
+    </div>
+
+    <div class="text-container hebrew memory flicker" style="top: 35%; right: 65%;">
+        אני זוכר את הפעם האחרונה שהיינו מאושרים.
+        או אולי אף פעם לא באמת היינו מאושרים.
+        אולי רק חשבתי שאנחנו מאושרים.
+        אולי היא כבר חשבה עליו.
+        אולי היא כבר השוותה בינינו.
+        גילתה שאני חסר.
+        גילתה שהוא טוב יותר.
+        אני תוהה מה יש לו שאין לי.
+        כסף? ביטחון? עתיד?
+        אין לי אף אחד מהדברים האלה.
+        בקושי יש לי הווה.
+        ההווה שלי זה לשבת בחדר החשוך הזה.
+        להקליד מילים שאף אחד לא יקרא.
+        לחשוב מחשבות שלאף אחד לא אכפת מהן.
+        לאהוב מישהי שאוהבת מישהו אחר.
+        זה הבדיחה הכי עצובה.
+        ואני שורת המחץ.
+        כולם צוחקים.
+        גם היא צוחקת.
+        במיוחד היא צוחקת.
+        איתו.
+        עליי.
+        תמיד עליי.
+        החבל בארון.
+        ספרתי את הכדורים.
+        המכתב נכתב ונמחק.
+        אני רועד כל הזמן.
+        קור מתפשט מהפנים החוצה.
+        אני כבר לא אני.
+        אני רק הכאב שהיא השאירה.
+        רק החלל שהיא מילאה.
+        ואז התרוקנה.
+        השאירה אותי ריק.
+        ואת עצמה מלאה.
+        איתו.
+        הכאב הזה אוכל אותי מבפנים.
+        כמו חומצה.
+        כמו אש.
+        כמו כלום שמתפשט.
+        עד שלא יישאר כלום.
+        עד שלא יישאר אני.
+        רק שקט.
+        רק חושך.
+        רק סוף.
+    </div>
+
+    <div class="text-container latin" style="top: 75%; left: 20%;">
+        saepe cogito quomodo eveniet.
+        epistulam. quid scribam?
+        "me paenitet perturbationis" tritum videtur.
+        "dic ei me amavisse" miserum videtur.
+        fortasse nihil.
+        fortasse id aptum est.
+        in hunc mundum nihil attuli.
+        nihil auferam.
+        illa mihi omnia dedit et omnia abstulit.
+        fortasse id est amor.
+        alicui vim dandi te delendi.
+        et tum mirari cum faciunt.
+        iam non miror.
+        tantum fessus.
+        tam fessus spirandi.
+        fessus simulandi.
+        fessus vultus eorum ubique videndi.
+        fessus mei ipsius.
+        fessus essendi.
+        tantum ita fessus.
+        medicamenta in mensa balnei.
+        quietis parvae promissa alba.
+        tam facilis via ad silentium.
+        ad nihilum.
+        ad pacem.
+        sed timeo.
+        semper timeo.
+        etiam nunc timeo.
+        quid si non sufficiunt?
+        quid si dolor?
+        quid si illa tandem curabit?
+        postquam non iam ero?
+        fortasse tunc.
+        fortasse nunquam.
+        melius non scire.
+        melius nihil.
+        semper nihil.
+    </div>
+
+    <div class="text-container chinese" style="bottom: 25%; left: 50%;">
+        我一直在想这会怎么发生。
+        遗书。我该写什么？
+        "抱歉弄乱了"似乎太老套。
+        "告诉她我爱过她"似乎太可悲。
+        也许什么都不写。
+        也许这样才合适。
+        我赤条条来到这世界。
+        我也将赤条条离开。
+        她给了我一切然后全部拿走。
+        也许这就是爱。
+        给某人摧毁你的力量。
+        然后当他们这样做时感到惊讶。
+        我不再惊讶了。
+        只是累了。
+        累得呼吸都困难。
+        累得假装一切正常。
+        累得到处看到他们的脸。
+        累得做我自己。
+        累得存在。
+        只是他妈的好累。
+        窗外的世界还在继续。
+        情侣在笑。
+        人们在生活。
+        我在慢慢死去。
+        从内到外。
+        一点一点。
+        一天一天。
+        没人注意到。
+        为什么他们会注意到？
+        我只是又一个破碎的人。
+        在又一个破碎的房间里。
+        想着又一个破碎的想法。
+        很快就会完全破碎。
+        然后终于安静。
+        终于平静。
+        终于自由。
+        从这一切中自由。
+        尤其从我自己中自由。
+    </div>
+
+    <div class="text-container japanese" style="top: 85%; right: 15%;">
+        時々どうなるか考える。
+        遺書。いったい何を書けばいい？
+        「散らかしてごめん」は陳腐だ。
+        「彼女に愛していたと伝えて」は哀れだ。
+        多分何も書かない。
+        多分それがふさわしい。
+        私は何も持たずにこの世界に来た。
+        何も持たずに去る。
+        彼女は私に全てを与え、そして全てを取り去った。
+        多分それが愛だ。
+        誰かにあなたを破壊する力を与えること。
+        そして彼らがそうした時に驚くこと。
+        もう驚かない。
+        ただ疲れた。
+        息をするのも疲れた。
+        ふりをするのも疲れた。
+        どこにでも彼らの顔が見えるのも疲れた。
+        私であることも疲れた。
+        存在することも疲れた。
+        ただ本当に疲れた。
+        バスルームの薬が呼んでいる。
+        小さな白い約束。
+        苦痛のない約束。
+        思考のない約束。
+        彼女のない約束。
+        彼のない約束。
+        私のない約束。
+        全てのない約束。
+        無の約束。
+        それはとても魅力的だ。
+        とても簡単だ。
+        とても近い。
+        窓の向こうに世界がある。
+        彼女が彼と笑っている世界。
+        私がいない世界。
+        もうすぐ私がいなくなる世界。
+        彼女が気づく世界？
+        彼女が悲しむ世界？
+        彼女が無関心な世界？
+        知らない方がいい。
+        何も知らない方がいい。
+        ただ消える。
+        静かに。
+        きれいに。
+        永遠に。
+    </div>
+
+    <div class="text-container hebrew despair glitch" style="bottom: 5%; right: 10%; font-size: 16px;">
+        אם מישהו ימצא את זה...
+        אל תאשימו אותה.
+        זו לא אשמתה.
+        היא פשוט הפסיקה לאהוב.
+        היא פשוט מצאה מישהו טוב יותר.
+        זה מה שאנשים עושים.
+        זה מה שיצורים חיים עושים.
+        הם זזים לכיוון האור.
+        אני לא אור.
+        אני חושך.
+        אני הריק שהיא ברחה ממנו.
+        עכשיו אני גם בורח.
+        אל תוך ריק גדול יותר.
+        קבוע.
+        אולי יש שם שלווה.
+        אולי יש שם כלום.
+        כל אחד מהם טוב מזה.
+        מלהיזכר.
+        מלכאוב.
+        מלהיות האדם שהיא עזבה.
+        מלהיות רוח הרפאים בעברה.
+        בקרוב אהיה רוח רפאים אמיתית.
+        בתוך ריק אמיתי.
+        שבו שום דבר לא כואב.
+        שבו אני לא צריך לראות אותם.
+        שבו אני לא צריך להיות אני.
+        להתראות.
+        או סוף סוף.
+        מה שלא יהיה.
+        אני לא יכול יותר.
+        פשוט לא יכול יותר.
+        הכל כואב.
+        הנשימה כואבת.
+        המחשבות כואבות.
+        הזיכרונות הורגים אותי.
+        והיא... היא מאושרת.
+        איתו.
+        בלעדיי.
+        יותר טוב בלעדיי.
+        תמיד יותר טוב בלעדיי.
+        אז אולי זה הפתרון.
+        להיות תמיד בלעדיי.
+        להיות כלום.
+        סוף.
+    </div>
+
+    <div class="text-container hebrew memory" style="top: 95%; left: 30%; opacity: 0.03; transition: opacity 5s;" 
+         onmouseover="this.style.opacity=1" onmouseout="this.style.opacity=0.03">
+        בבקשה אל תעשה את זה.
+        תתקשר למישהו.
+        כל אחד.
+        1201.
+        988.
+        זה לא חייב להיות ככה.
+        הכאב יכול להסתיים בלי לסיים אותך.
+        היא לא שווה את החיים שלך.
+        אף אחד לא שווה את החיים שלך.
+        אתה שווה יותר מזה.
+        גם אם אתה לא מאמין בזה עכשיו.
+        גם אם זה לא מרגיש נכון.
+        זה נכון.
+        בבקשה תאמין לי.
+        בבקשה תתקשר.
+        בבקשה תישאר.
+        החיים משתנים.
+        הכאב עובר.
+        האהבה הזאת תישכח.
+        תימצא אהבה חדשה.
+        תימצא שלווה חדשה.
+        רק תישאר.
+        בבקשה.
+        בשביל מי שתהיה בעתיד.
+        בשביל האני שאתה עוד לא מכיר.
+        בשביל הסיפור שעוד לא סיפרת.
+        בשביל החיים שעוד לא חיית.
+        תישאר.
+    </div>
+
+    <audio id="vinyl-audio" loop>
+        <source src="https://babyoutrhy.github.io/music/Vinyl.wav" type="audio/wav">
+    </audio>
+
+    <script>
+        window.addEventListener('load', function() {
+            const vinylAudio = document.getElementById('vinyl-audio');
+            vinylAudio.volume = 0.3;
+            vinylAudio.play().catch(e => {
+                document.body.addEventListener('click', function() {
+                    vinylAudio.play();
+                }, { once: true });
+            });
+        });
+
+        const hebrewSuicidal = [
+            "החבל בארון. מדדתי אותו אתמול. זה אמור לעבוד.",
+            "כתבתי את הפתק שלוש פעמים. אני כל פעם קורע אותו. שום דבר לא נשמע נכון.",
+            "היא בטח במיטה שלו עכשיו. צוחקת. שמחה. לא חושבת עליי בכלל.",
+            "אני לא יכול לאכול. אני לא יכול לישון. אני פשוט יושב פה וחושב על לסיים את זה.",
+            "הידיים שלי לא מפסיקות לרעוד. הכל כואב. אפילו לנשום כואב.",
+            "נסעתי לגשר היום. עמדתי שם שעה. לא הצלחתי לעשות את זה. חזרתי הביתה.",
+            "האקדח מרגיש כבד ביד שלי. כבד יותר ממה שציפיתי. או אולי אני פשוט חלש.",
+            "ספרתי את הכדורים. יש מספיק. יותר ממספיק. זה יהיה כל כך קל.",
+            "היא חסמה את המספר שלי. ניסיתי להתקשר. רק רציתי לשמוע את הקול שלה עוד פעם אחת.",
+            "הוא כל מה שאני לא. בטוח. מצליח. חי. אני רק רוח רפאים.",
+            "לפעמים אני חושב לשלוח לה הודעה אחרונה. אבל מה אני אגיד?",
+            "אני לא יכול להסתכל במראה יותר. אני לא מזהה את האדם שמסתכל חזרה.",
+            "הכל טעם של אפר. הכל נשמע כמו רעש סטטי. הכל מרגיש כמו כאב.",
+            "מחקתי היום את כל התמונות שלנו. חוץ מאחת. זו שהיא מחייכת. באמת מחייכת.",
+            "החברים שלי הפסיקו להתקשר. הם עייפו ממני. אני גם עייף מעצמי.",
+            "העולם ממשיך לזוז. אנשים ממשיכים לחיות. אני תקוע פה. קפוא ברגע הזה.",
+            "אני ממשיך לדמיין את התגובה שלה. היא תבכה? יהיה לה אכפת? או שהיא פשוט תכווץ כתפיים?",
+            "יש חלק ממני שרוצה לחיות. אבל הוא הולך וקטן כל יום.",
+            "אני לא יכול לזכור איך אושר מרגיש. אני רק זוכר איך זה מרגיש לאבד אותו.",
+            "אולי בחיים אחרים. אולי ביקום מקביל. אולי אז הייתי מספיק.",
+            "הכאב הזה לא נגמר. הוא פשוט גדל. מתפשט. אוכל אותי מבפנים.",
+            "כל נשימה קשה. כל פעימת לב כואבת. כל מחשבה חוזרת אליה. ואליו.",
+            "הלילה שוב חלמתי עליה. בחלום היא עדיין אוהבת אותי. ואז אני מתעורר.",
+            "השעון מתקתק. הזמן עובר. ואני נשאר פה. במקום שבו היא השאירה אותי.",
+            "אני הופך להיות כלום. לאט לאט. יום אחרי יום. עד שלא יישאר כלום.",
+            "המכתב מוכן. הכדורים מוכנים. החבל מוכן. רק אני לא מוכן.",
+            "למה היא עשתה את זה? למה היא בחרה בו? למה אני לא הייתי מספיק?",
+            "היא הייתה הכל שלי. עכשיו אני כלום שלה. אפס. ריק. חלל.",
+            "האהבה הפכה לשנאה. השנאה הפכה לכאב. הכאב הפך לכלום.",
+            "אני רוצה להפסיק להרגיש. להפסיק לחשוב. להפסיק להיות. רק להפסיק."
+        ];
+
+        const hebrewMemories = [
+            "היא נהגה לנשק אותי לילה טוב. עכשיו היא מנשקת אותו.",
+            "המקום האהוב עליה על הכתף שלי ריק. הוא מקבל להחזיק אותה עכשיו.",
+            "אני זוכר את הריח שלה על הכריות שלי. הוא דוהה. בקרוב הוא ייעלם לגמרי.",
+            "היו לנו תוכניות. כל כך הרבה תוכניות. עכשיו היא עושה תוכניות חדשות איתו.",
+            "הצחוק שלה נהג למלא את החדר. עכשיו החדר שקט. אני שקט.",
+            "היא הבטיחה לנצח. האמנתי לה. אני הטיפש.",
+            "בפעם האחרונה שעשינו אהבה, היא כבר עזבה. פשוט עוד לא ידעתי.",
+            "היא השאירה סוודר כאן. הוא עדיין מריח כמו אותה. אני לפעמים ישן איתו.",
+            "התכוונו לקחת כלב. עכשיו בטח יש לה כלב איתו.",
+            "אני עדיין שומע אותה אומרת 'אני אוהבת אותך'. אבל היא כבר לא מתכוונת לזה.",
+            "היד שלה כבר לא מתאימה לשלי. היא מתאימה לשלו.",
+            "כל הבדיחות הפרטיות שלנו הן רק זיכרונות עכשיו. זיכרונות כואבים.",
+            "היא מחקה אותי מהחיים שלה כאילו אני כלום. אולי באמת הייתי כלום.",
+            "אני כל הזמן מצפה שהיא תשלח הודעה. היא אף פעם לא שולחת. היא שולחת לו במקום.",
+            "השיר שלנו מתנגן ברדיו. אני חייב להחליף תחנה. אני לא יכול לנשום.",
+            "הייתה החברה הכי טובה שלי. עכשיו היא זרה שישנה עם המחליף שלי.",
+            "אני חולם עליה כל לילה. בחלומות, היא עדיין אוהבת אותי. ואז אני מתעורר.",
+            "היא אמרה לי שאני 'יותר מדי'. הוא בטח בדיוק מספיק.",
+            "לא הייתי מושלם. אבל ניסיתי. כנראה שניסיון לא הספיק.",
+            "היא מצאה מישהו טוב יותר. זה מה שמגיע לה. מישהו טוב יותר."
+        ];
+
+        const latinSuicidal = [
+            "funem in armario habeo. heri mensus sum. satis longus est.",
+            "epistulam ter scripsi. semper discerpo. nihil rectum sonat.",
+            "illa fortasse nunc in lecto eius est. ridens. felix. de me ne cogitans.",
+            "edere non possum. dormire non possum. hic tantum sedeo et de fine cogito.",
+            "manus meae tremunt. omnia dolent. etiam respiratio dolet.",
+            "hodie ad pontem vehi. ibi steti per horam. facere non potui. domum redii.",
+            "sclopetum grave in manu sentio. gravius quam exspectabam. aut fortasse debilis sum.",
+            "pillas numeravi. satis sunt. plus quam satis. tam facile esset.",
+            "illa numerum meum exclusit. vocare conatus sum. vocem eius tantum iterum audire volui.",
+            "ille omnia est quae ego non sum. confidens. prosperus. vivus. ego umbra tantum sum.",
+            "interdum cogito de uno ultimo nuntio mittendo. sed quid dicerem?",
+            "in speculum aspicere non possum. hominem qui respicit non agnosco.",
+            "omnia cinere sapiunt. omnia sicut sonitus inani audiuntur. omnia sicut dolor sentiuntur.",
+            "hodie omnes imagines nostras delevi. praeter unam. in qua ridet. vere ridet.",
+            "amici mei vocare desierunt. mei fessi sunt. ego quoque mei fessus sum.",
+            "mundus procedit. homines vivunt. ego hic haereo. in hoc momento congelatus.",
+            "eius reactionem imaginor. fleretne? curaretne? an tantum humeros moveret?",
+            "pars mei vivere vult. sed in dies minor fit.",
+            "quam felicitas sentiatur reminiscor non possum. tantum quam amitteretur.",
+            "fortasse in alia vita. fortasse in alio universo. fortasse tum satis eram."
+        ];
+
+        const chineseSuicidal = [
+            "绳子在衣柜里。我昨天量过了。应该够长。",
+            "遗书写了三次。总是撕掉。怎么写都不对。",
+            "她现在可能在他床上。笑着。开心着。根本不想我。",
+            "吃不下。睡不着。只是坐在这里想着结束。",
+            "我的手一直抖。一切都痛。连呼吸都痛。",
+            "今天开车到桥上。站了一个小时。做不到。回家了。",
+            "枪在手里很重。比想象的重。或者可能只是我太弱。",
+            "数了药片。够了。绰绰有余。太容易了。",
+            "她屏蔽了我的号码。我试着打电话。只想再听一次她的声音。",
+            "他拥有我没有的一切。自信。成功。活着。我只是个鬼魂。",
+            "有时想发最后一条信息。但说什么呢？",
+            "无法再照镜子。不认识镜子里的人。",
+            "一切都像灰烬的味道。一切都像静电的声音。一切都像疼痛的感觉。",
+            "今天删了所有我们的照片。除了一张。她真正笑着的那张。",
+            "朋友们不再打电话。他们厌倦我了。我也厌倦自己了。",
+            "世界继续转动。人们继续生活。我困在这里。冻结在这一刻。",
+            "一直想象她的反应。她会哭吗？会在意吗？还是只是耸肩？",
+            "有一部分我想活下去。但每天都在变小。",
+            "不记得幸福的感觉了。只记得失去它的感觉。",
+            "也许在另一个生命里。也许在另一个宇宙。也许那时我够了。"
+        ];
+
+        const japaneseSuicidal = [
+            "ロープはクローゼットにある。昨日測った。十分な長さだ。",
+            "遺書を三回書いた。いつも破ってしまう。何も正しく聞こえない。",
+            "彼女は今彼のベッドにいるかもしれない。笑っている。幸せ。私のことなど考えてもいない。",
+            "食べられない。眠れない。ただここに座って終わりについて考えている。",
+            "手が震え続ける。全てが痛い。呼吸さえも痛い。",
+            "今日橋まで運転した。一時間そこに立っていた。できなかった。家に帰った。",
+            "手の中で銃が重い。予想より重い。あるいは単に私が弱いだけか。",
+            "薬を数えた。十分ある。十分以上ある。とても簡単だ。",
+            "彼女は私の番号をブロックした。電話してみた。ただもう一度彼女の声が聞きたかった。",
+            "彼は私にない全てを持っている。自信。成功。生きている。私はただの幽霊だ。",
+            "時々最後のメッセージを送ることを考える。でも何て言う？",
+            "もう鏡を見られない。見つめ返す人間がわからない。",
+            "全てが灰の味がする。全てが静電気のように聞こえる。全てが痛みのように感じる。",
+            "今日私たちの写真を全て削除した。一枚を除いて。彼女が本当に笑っている写真。",
+            "友達は電話してこなくなった。彼らは私に飽きた。私も自分に飽きた。",
+            "世界は動き続ける。人々は生き続ける。私はここで立ち往生している。この瞬間に凍りついて。",
+            "彼女の反応を想像し続ける。泣くだろうか？気にかけるだろうか？それともただ肩をすくめるだけか？",
+            "生きたいと思う私の一部がある。しかしそれは毎日小さくなっている。",
+            "幸せがどんな感じか思い出せない。ただそれを失った感じだけを覚えている。",
+            "多分別の人生で。多分別の宇宙で。多分その時私は十分だった。"
+        ];
+
+        function getRandomItems(arr, count) {
+            const shuffled = [...arr].sort(() => 0.5 - Math.random());
+            return shuffled.slice(0, Math.min(count, shuffled.length));
+        }
+
+        function createTextContainer(content, type = 'despair', language = 'hebrew') {
+            const elem = document.createElement('div');
+            elem.className = 'text-container';
+            
+            const effects = ['flicker', 'slow-flicker', 'glitch', ''];
+            const effect = effects[Math.floor(Math.random() * effects.length)];
+            if (effect) elem.classList.add(effect);
+            
+            elem.classList.add(type);
+            if (language !== 'hebrew') {
+                elem.classList.add(language);
+            } else {
+                elem.classList.add('hebrew');
+            }
+            
+            if (Math.random() > 0.7) {
+                elem.style.opacity = Math.random() * 0.1 + 0.05;
+                elem.style.transition = 'opacity 3s';
+                elem.onmouseover = () => elem.style.opacity = 1;
+                elem.onmouseout = () => elem.style.opacity = Math.random() * 0.1 + 0.05;
+            }
+            
+            elem.textContent = content;
+            elem.style.left = Math.random() * 85 + '%';
+            elem.style.top = Math.random() * 90 + '%';
+            elem.style.fontSize = (Math.random() * 4 + 12) + 'px';
+            elem.style.opacity = Math.random() * 0.8 + 0.2;
+            elem.style.transform = `rotate(${Math.random() * 4 - 2}deg)`;
+            elem.style.zIndex = Math.floor(Math.random() * 100);
+            elem.style.maxWidth = (Math.random() * 100 + 200) + 'px';
+            
+            document.body.appendChild(elem);
+            
+            setTimeout(() => {
+                elem.style.opacity = '0';
+                setTimeout(() => elem.remove(), 1000);
+            }, 20000 + Math.random() * 20000);
+        }
+
+        function generateInitialContent() {
+            const randomHebrewSuicidal = getRandomItems(hebrewSuicidal, 15);
+            randomHebrewSuicidal.forEach((thought, i) => {
+                setTimeout(() => {
+                    createTextContainer(thought, 'despair', 'hebrew');
+                }, i * 400);
+            });
+
+            const randomLatinThoughts = getRandomItems(latinSuicidal, 8);
+            randomLatinThoughts.forEach((thought, i) => {
+                setTimeout(() => {
+                    createTextContainer(thought, 'despair', 'latin');
+                }, i * 500 + 100);
+            });
+
+            const randomChineseThoughts = getRandomItems(chineseSuicidal, 8);
+            randomChineseThoughts.forEach((thought, i) => {
+                setTimeout(() => {
+                    createTextContainer(thought, 'despair', 'chinese');
+                }, i * 450 + 150);
+            });
+
+            const randomJapaneseThoughts = getRandomItems(japaneseSuicidal, 8);
+            randomJapaneseThoughts.forEach((thought, i) => {
+                setTimeout(() => {
+                    createTextContainer(thought, 'despair', 'japanese');
+                }, i * 470 + 200);
+            });
+
+            const randomHebrewMemories = getRandomItems(hebrewMemories, 10);
+            randomHebrewMemories.forEach((memory, i) => {
+                setTimeout(() => {
+                    createTextContainer(memory, 'memory', 'hebrew');
+                }, i * 600 + 300);
+            });
+        }
+
+        generateInitialContent();
+
+        setInterval(() => {
+            const languages = [
+                {lang: 'hebrew', pool: hebrewSuicidal.concat(hebrewMemories)},
+                {lang: 'latin', pool: latinSuicidal},
+                {lang: 'chinese', pool: chineseSuicidal},
+                {lang: 'japanese', pool: japaneseSuicidal}
+            ];
+            
+            const languageChoice = languages[Math.floor(Math.random() * languages.length)];
+            const content = languageChoice.pool[Math.floor(Math.random() * languageChoice.pool.length)];
+            
+            let type = 'despair';
+            if (languageChoice.lang === 'hebrew' && Math.random() > 0.6) {
+                type = 'memory';
+            }
+            
+            createTextContainer(content, type, languageChoice.lang);
+        }, 3000);
+
+        document.addEventListener('mousemove', (e) => {
+            if (Math.random() > 0.7) {
+                const trail = document.createElement('div');
+                trail.style.position = 'fixed';
+                trail.style.left = e.pageX + 'px';
+                trail.style.top = e.pageY + 'px';
+                trail.style.width = Math.random() * 6 + 2 + 'px';
+                trail.style.height = Math.random() * 6 + 2 + 'px';
+                trail.style.backgroundColor = '#8b0000';
+                trail.style.pointerEvents = 'none';
+                trail.style.opacity = '0.4';
+                trail.style.borderRadius = '50%';
+                trail.style.zIndex = '9999';
+                document.body.appendChild(trail);
+                
+                setTimeout(() => {
+                    trail.style.opacity = '0';
+                    setTimeout(() => trail.remove(), 1000);
+                }, 300);
+            }
+        });
+
+        setInterval(() => {
+            if (Math.random() > 0.98) {
+                const flash = document.createElement('div');
+                flash.style.position = 'fixed';
+                flash.style.top = '0';
+                flash.style.left = '0';
+                flash.style.width = '100%';
+                flash.style.height = '100%';
+                flash.style.backgroundColor = '#8b0000';
+                flash.style.opacity = '0.15';
+                flash.style.zIndex = '9999';
+                flash.style.pointerEvents = 'none';
+                document.body.appendChild(flash);
+                
+                setTimeout(() => {
+                    flash.style.opacity = '0';
+                    setTimeout(() => flash.remove(), 300);
+                }, 100);
+            }
+        }, 4000);
+
+        function createEmergencyMessage() {
+            const messages = [
+                "988",
+                "1201",
+                "תתקשר למישהו",
+                "בבקשה תישאר",
+                "זה משתפר",
+                "אתה חשוב",
+                "אל תעשה את זה",
+                "אתה לא לבד",
+                "הכאב יעבור",
+                "תפנה לעזרה"
+            ];
+            
+            const elem = document.createElement('div');
+            elem.textContent = messages[Math.floor(Math.random() * messages.length)];
+            elem.style.position = 'fixed';
+            elem.style.left = Math.random() * 90 + '%';
+            elem.style.top = Math.random() * 90 + '%';
+            elem.style.fontSize = Math.random() * 20 + 15 + 'px';
+            elem.style.opacity = Math.random() * 0.1 + 0.05;
+            elem.style.zIndex = '500';
+            elem.style.pointerEvents = 'none';
+            elem.style.color = '#00bfff';
+            elem.style.fontWeight = 'bold';
+            elem.style.transition = 'opacity 2s';
+            
+            if (/[א-ת]/.test(elem.textContent)) {
+                elem.style.direction = 'rtl';
+                elem.style.textAlign = 'right';
+            }
+            
+            document.body.appendChild(elem);
+            
+            let pulseCount = 0;
+            const pulseInterval = setInterval(() => {
+                pulseCount++;
+                if (pulseCount > 3) {
+                    clearInterval(pulseInterval);
+                    elem.style.opacity = '0';
+                    setTimeout(() => elem.remove(), 2000);
+                } else {
+                    elem.style.opacity = elem.style.opacity == '0.15' ? '0.05' : '0.15';
+                }
+            }, 800);
+            
+            setTimeout(() => {
+                clearInterval(pulseInterval);
+                elem.style.opacity = '0';
+                setTimeout(() => elem.remove(), 2000);
+            }, 10000);
+        }
+
+        for (let i = 0; i < 5; i++) {
+            setTimeout(createEmergencyMessage, i * 8000);
+        }
+
+        setInterval(createEmergencyMessage, 25000);
+
+        function createBloodDrip() {
+            const drip = document.createElement('div');
+            drip.style.position = 'fixed';
+            drip.style.left = Math.random() * 100 + '%';
+            drip.style.top = '-10px';
+            drip.style.width = '1px';
+            drip.style.height = Math.random() * 100 + 50 + 'px';
+            drip.style.backgroundColor = '#8b0000';
+            drip.style.opacity = Math.random() * 0.3 + 0.1;
+            drip.style.zIndex = '9998';
+            drip.style.pointerEvents = 'none';
+            document.body.appendChild(drip);
+            
+            let topPos = -10;
+            const dropInterval = setInterval(() => {
+                topPos += 5;
+                drip.style.top = topPos + 'px';
+                
+                if (topPos > window.innerHeight) {
+                    clearInterval(dropInterval);
+                    drip.style.opacity = '0';
+                    setTimeout(() => drip.remove(), 500);
+                }
+            }, 50);
+            
+            setTimeout(() => {
+                clearInterval(dropInterval);
+                drip.style.opacity = '0';
+                setTimeout(() => drip.remove(), 500);
+            }, 10000);
+        }
+
+        for (let i = 0; i < 10; i++) {
+            setTimeout(createBloodDrip, i * 3000);
+        }
+
+        setInterval(createBloodDrip, 7000);
+
+        setInterval(() => {
+            if (Math.random() > 0.92) {
+                const whisper = document.createElement('div');
+                const languages = [
+                    ...hebrewSuicidal,
+                    ...hebrewMemories,
+                    ...latinSuicidal,
+                    ...chineseSuicidal,
+                    ...japaneseSuicidal
+                ];
+                whisper.textContent = languages[Math.floor(Math.random() * languages.length)];
+                whisper.style.position = 'fixed';
+                whisper.style.left = Math.random() * 85 + '%';
+                whisper.style.top = Math.random() * 85 + '%';
+                
+                const text = whisper.textContent;
+                if (/[\u4e00-\u9fff]/.test(text)) {
+                    whisper.style.color = '#ff4500';
+                } else if (/[\u3040-\u309F\u30A0-\u30FF]/.test(text)) {
+                    whisper.style.color = '#20b2aa';
+                } else if (/[āēīōūȳĀĒĪŌŪȲ]/.test(text) || text.includes('?')) {
+                    whisper.style.color = '#9370db';
+                } else if (/[א-ת]/.test(text)) {
+                    whisper.style.color = '#daa520';
+                    whisper.style.direction = 'rtl';
+                    whisper.style.textAlign = 'right';
+                } else {
+                    whisper.style.color = '#b22222';
+                }
+                
+                whisper.style.opacity = '0';
+                whisper.style.fontSize = '11px';
+                whisper.style.zIndex = '9998';
+                whisper.style.transition = 'opacity 1s';
+                document.body.appendChild(whisper);
+                
+                setTimeout(() => {
+                    whisper.style.opacity = '0.4';
+                    setTimeout(() => {
+                        whisper.style.opacity = '0';
+                        setTimeout(() => whisper.remove(), 1000);
+                    }, 2000);
+                }, 10);
+            }
+        }, 4000);
+
+        document.addEventListener('keydown', (e) => {
+            if (e.code === 'Space') {
+                const emergency = document.createElement('div');
+                emergency.innerHTML = '<h3 style="color:#00bfff; direction:rtl; text-align:center;">קו החירום הלאומי למניעת התאבדות: 988</h3>' +
+                                    '<p style="color:#fff; direction:rtl; text-align:center;">ער״ן (עזרה ראשונה נפשית): 1201</p>' +
+                                    '<p style="color:#aaa; font-size:12px; direction:rtl; text-align:center;">אתה לא לבד. בבקשה פנה לעזרה.</p>';
+                emergency.style.position = 'fixed';
+                emergency.style.top = '50%';
+                emergency.style.left = '50%';
+                emergency.style.transform = 'translate(-50%, -50%)';
+                emergency.style.background = 'rgba(0,0,0,0.95)';
+                emergency.style.border = '3px solid #00bfff';
+                emergency.style.padding = '30px';
+                emergency.style.zIndex = '100000';
+                emergency.style.textAlign = 'center';
+                emergency.style.width = '500px';
+                document.body.appendChild(emergency);
+                
+                setTimeout(() => {
+                    emergency.style.opacity = '0';
+                    setTimeout(() => emergency.remove(), 1000);
+                }, 5000);
+            }
+        });
+    </script>
+</body>
+</html>
