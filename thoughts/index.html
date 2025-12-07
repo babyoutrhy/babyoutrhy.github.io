@@ -1065,31 +1065,6 @@
                 }, 10);
             }
         }, 4000);
-
-        document.addEventListener('keydown', (e) => {
-            if (e.code === 'Space') {
-                const emergency = document.createElement('div');
-                emergency.innerHTML = '<h3 style="color:#00bfff; direction:rtl; text-align:center;">קו החירום הלאומי למניעת התאבדות: 988</h3>' +
-                                    '<p style="color:#fff; direction:rtl; text-align:center;">ער״ן (עזרה ראשונה נפשית): 1201</p>' +
-                                    '<p style="color:#aaa; font-size:12px; direction:rtl; text-align:center;">אתה לא לבד. בבקשה פנה לעזרה.</p>';
-                emergency.style.position = 'fixed';
-                emergency.style.top = '50%';
-                emergency.style.left = '50%';
-                emergency.style.transform = 'translate(-50%, -50%)';
-                emergency.style.background = 'rgba(0,0,0,0.95)';
-                emergency.style.border = '3px solid #00bfff';
-                emergency.style.padding = '30px';
-                emergency.style.zIndex = '100000';
-                emergency.style.textAlign = 'center';
-                emergency.style.width = '500px';
-                document.body.appendChild(emergency);
-                
-                setTimeout(() => {
-                    emergency.style.opacity = '0';
-                    setTimeout(() => emergency.remove(), 1000);
-                }, 5000);
-            }
-        });
     </script>
 </body>
 </html>
