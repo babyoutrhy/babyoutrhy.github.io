@@ -152,7 +152,7 @@
             text-align: center;
         }
     </style>
-    <!-- Load luaparse from CDN for full Lua parsing -->
+    <!-- luaparse from unpkg (works) -->
     <script src="https://unpkg.com/luaparse@0.3.1/luaparse.min.js"></script>
 </head>
 <body>
@@ -203,260 +203,8 @@
         return Math.floor(Math.random() * (max - min + 1)) + min;
     }
 
-    // ---------- rename all local identifiers using luaparse ----------
-    function renameIdentifiers(source) {
-        // parse the source into AST
-        let ast;
-        try {
-            ast = luaparse.parse(source, { luaVersion: '5.1' });
-        } catch (e) {
-            throw new Error(`Parsing failed: ${e.message}`);
-        }
-
-        // We'll traverse the AST and collect all local variables, parameters, for-loop variables.
-        // For each scope, we assign a random new name to each original name.
-        // We need a mapping from original name to new name, scoped.
-
-        // This is a simplified scoping: we'll use a stack of scope tables.
-        // Each scope maps original name -> new random name.
-        // We'll generate a new random name when we encounter a local declaration.
-        // Then we replace all Identifier nodes that refer to that variable.
-        // For globals, we leave unchanged.
-
-        // We'll also need to handle function parameters, for loops, etc.
-        // We'll walk the AST and collect declarations.
-
-        const scopeStack = [{}]; // start with global scope (no local declarations)
-        const renameMap = new Map(); // for identifiers we encounter, we'll store their scoped name
-
-        // Helper to get current scope
-        function currentScope() {
-            return scopeStack[scopeStack.length - 1];
-        }
-
-        // Helper to push a new scope (function, for loop, etc.)
-        function pushScope() {
-            scopeStack.push({});
-        }
-
-        function popScope() {
-            scopeStack.pop();
-        }
-
-        // Function to rename an identifier node: look up in scope stack from top to bottom
-        function renameIdentifier(node) {
-            if (!node || node.type !== 'Identifier') return;
-            const name = node.name;
-            // Don't rename Lua keywords (they are not identifiers anyway) or global objects we want to preserve.
-            // We'll assume any identifier not declared as local is global and should be left alone.
-            // We'll search from top scope downwards.
-            for (let i = scopeStack.length - 1; i >= 0; i--) {
-                const scope = scopeStack[i];
-                if (scope[name] !== undefined) {
-                    node.name = scope[name];
-                    return;
-                }
-            }
-            // Not found in any local scope -> it's a global; leave unchanged.
-        }
-
-        // Recursive walk function
-        function walk(node) {
-            if (!node || typeof node !== 'object') return;
-
-            // Handle different node types that introduce new locals
-            if (node.type === 'FunctionDeclaration' || node.type === 'FunctionExpression') {
-                // Parameters become locals in the new scope
-                pushScope();
-                const scope = currentScope();
-                if (node.parameters) {
-                    node.parameters.forEach(param => {
-                        if (param.type === 'Identifier') {
-                            const newName = randomName();
-                            scope[param.name] = newName;
-                            param.name = newName; // rename directly
-                        }
-                        // else might be '...' or something, ignore
-                    });
-                }
-                // walk the body after setting parameters
-                if (node.body) walk(node.body);
-                popScope();
-                return;
-            }
-
-            if (node.type === 'LocalStatement') {
-                // Declare new local variables
-                const scope = currentScope();
-                node.variables.forEach((v, idx) => {
-                    if (v.type === 'Identifier') {
-                        const newName = randomName();
-                        scope[v.name] = newName;
-                        v.name = newName; // rename declaration
-                    }
-                });
-                // walk the init if present
-                if (node.init) node.init.forEach(init => walk(init));
-                return;
-            }
-
-            if (node.type === 'ForGenericStatement' || node.type === 'ForNumericStatement') {
-                // for loop introduces variables
-                pushScope();
-                const scope = currentScope();
-                if (node.variables) {
-                    node.variables.forEach(v => {
-                        if (v.type === 'Identifier') {
-                            const newName = randomName();
-                            scope[v.name] = newName;
-                            v.name = newName;
-                        }
-                    });
-                }
-                // walk the rest (ranges, body)
-                if (node.left) walk(node.left);
-                if (node.right) walk(node.right);
-                if (node.step) walk(node.step);
-                if (node.body) walk(node.body);
-                popScope();
-                return;
-            }
-
-            if (node.type === 'RepeatStatement' || node.type === 'WhileStatement' || node.type === 'IfStatement' || node.type === 'ElseifClause' || node.type === 'ElseClause') {
-                // These create new scope? In Lua, they do not introduce a new lexical scope except for local declarations inside them.
-                // But local declarations inside blocks will be handled by LocalStatement inside the body.
-                // So we just walk children, but we don't push a scope for the block itself.
-                // However, we need to handle that local variables declared inside a block are not visible outside.
-                // Our scope stack will be pushed when we enter a LocalStatement? Actually LocalStatement is just a node, not a scope container.
-                // So we must treat each block (list of statements) as a scope. The AST has 'body' fields that are arrays.
-                // We'll need to push a new scope when we enter a block.
-                // Let's modify: before walking a block (array of statements), push scope, after walking pop.
-                // We'll need to identify blocks: function bodies, for bodies, if bodies, etc.
-                // We'll handle this at the point we call walk on arrays? Better to check node type and if it has a 'body' that is an array, we treat as block.
-                // But to keep it simple, we'll assume we already handled function and loop blocks. For if/else, we need to handle each clause as a block.
-                if (node.clauses) {
-                    node.clauses.forEach(clause => {
-                        // clause has a 'body' array
-                        if (clause.body) {
-                            pushScope();
-                            clause.body.forEach(stmt => walk(stmt));
-                            popScope();
-                        }
-                    });
-                } else if (node.body) {
-                    // could be an array or single node
-                    if (Array.isArray(node.body)) {
-                        pushScope();
-                        node.body.forEach(stmt => walk(stmt));
-                        popScope();
-                    } else {
-                        walk(node.body);
-                    }
-                }
-                // also walk condition
-                if (node.condition) walk(node.condition);
-                return;
-            }
-
-            // For all other nodes, recursively walk their properties
-            for (let key in node) {
-                if (node.hasOwnProperty(key)) {
-                    const child = node[key];
-                    if (Array.isArray(child)) {
-                        child.forEach(item => walk(item));
-                    } else {
-                        walk(child);
-                    }
-                }
-            }
-
-            // After walking children, rename this node if it's an identifier
-            if (node.type === 'Identifier') {
-                renameIdentifier(node);
-            }
-        }
-
-        walk(ast);
-
-        // Now generate code back from the modified AST
-        // We'll use a simple code generator that recreates Lua source.
-        // luaparse provides a `ast` object, but we need to generate code.
-        // There's no built-in generator in luaparse. We can use a third-party or write a simple one.
-        // Instead of writing a full generator, we can use the fact that we only renamed identifiers,
-        // so we can replace the original source with the new names using a string replacement technique
-        // based on the mapping we have. But we have scoped mapping, so it's not trivial.
-        // Alternative: use a library like "luacodegen" or "lua-ast-codegen". There is "lua-codegen" on npm, but we can't include easily.
-        // Given the complexity, we'll use a simpler approach: we'll replace all identifiers in the source using the mapping,
-        // but we must respect scoping to avoid renaming a global that appears as a local later.
-        // Our walk already renamed the identifiers in the AST, but we need to output the modified source.
-        // Since we don't have a generator, we can convert the AST back to source by traversing and building strings.
-        // That's a lot of code, but we can write a basic one that handles common constructs.
-        // For time, we'll attempt to use the original source and apply replacements per scope using a more sophisticated method: we'll use the AST to get the ranges of each identifier and replace them.
-        // luaparse provides location information if we enable it: `locations: true` in options. Then we can get line/column and replace.
-        // That might be easier: re-parse with locations, then replace the original source string by mapping each identifier node to its new name.
-        // We need to know the original positions. Let's do that.
-
-        // Re-parse with locations
-        try {
-            ast = luaparse.parse(source, { luaVersion: '5.1', locations: true });
-        } catch (e) {
-            throw new Error(`Parsing with locations failed: ${e.message}`);
-        }
-
-        // Clear previous mapping
-        scopeStack.length = 0;
-        scopeStack.push({});
-        // We'll collect replacements: an array of { start, end, newName } (indices in source)
-        const replacements = [];
-
-        // We need a function to record a replacement for an identifier node
-        function recordReplacement(node) {
-            if (!node || node.type !== 'Identifier' || !node.loc) return;
-            const name = node.name;
-            // find the scope where it's defined
-            for (let i = scopeStack.length - 1; i >= 0; i--) {
-                const scope = scopeStack[i];
-                if (scope[name] !== undefined) {
-                    const newName = scope[name];
-                    // replace from node.loc.start.index to node.loc.end.index
-                    // luaparse gives line/column, not index. We need index. But we can compute from line/column if we have the source lines.
-                    // This is getting very heavy. Given the time constraints, I'll opt for a simpler solution: we'll use a library that can minify Lua and rename locals.
-                    // Actually, there is a library called "luamin" that does exactly this: minify Lua and rename locals. It's available on CDN.
-                    // Let's switch to using luamin instead of our own parser.
-                }
-            }
-        }
-
-        // I'm going to change approach: use luamin (which is built on luaparse) for minification/renaming.
-        // luamin is available at https://unpkg.com/luamin@1.0.3/luamin.min.js
-        // We'll load it and use luamin.minify().
-        // This is much simpler and reliable.
-
-        // We'll need to add another script tag. Since we're already in an HTML file, we can dynamically load it.
-        // But for simplicity, I'll add it as another script tag.
-    }
-
-    // We'll modify the obfuscate function to use luamin.
-    // We need to load luamin. Let's add another script tag in the head.
-    // I'll add it now dynamically to ensure it's loaded before use.
-
-    // We'll wait for luamin to be available. We'll check if luamin is defined, otherwise load it.
-    function ensureLuamin(callback) {
-        if (typeof luamin !== 'undefined') {
-            callback();
-        } else {
-            const script = document.createElement('script');
-            script.src = 'https://unpkg.com/luamin@1.0.3/luamin.min.js';
-            script.onload = callback;
-            document.head.appendChild(script);
-        }
-    }
-
-    // ---------- string/number/boolean obfuscation ----------
-    function obfuscateStringsNumbersBooleans(source) {
-        // We'll use the same techniques as before, but we must be careful because luamin might have already changed some things.
-        // We'll apply these transformations after luamin.
-
+    // ---------- string/number/boolean obfuscation (applied after minification) ----------
+    function applyConstantObfuscation(source) {
         // 1. String obfuscation
         const decodeStrName = randomName();
         const stringDecoder = `
@@ -490,13 +238,13 @@ end
             source = source.slice(0, r.start) + r.replacement + source.slice(r.end);
         }
 
-        // 2. Number obfuscation
+        // 2. Number obfuscation (simple arithmetic)
         const numberRegex = /\b(-?\d+(?:\.\d+)?)\b/g;
         const numberReplacements = [];
         while ((match = numberRegex.exec(source)) !== null) {
             const full = match[0];
             const num = parseFloat(full);
-            // generate a random expression that yields the same number
+            // skip if it's part of a larger number (unlikely with word boundaries)
             const a = Math.random() * 1000;
             const b = Math.random() * 1000;
             const c = a + b - num;
@@ -512,7 +260,7 @@ end
         source = source.replace(/\btrue\b/g, '(1==1)');
         source = source.replace(/\bfalse\b/g, '(1==0)');
 
-        // 4. Junk code insertion
+        // 4. Junk code insertion (top of script)
         const junkLines = [];
         for (let i = 0; i < 3; i++) {
             junkLines.push(`local ${randomName()} = ${randInt(1,1000)}`);
@@ -525,10 +273,13 @@ end
 
     // ---------- main obfuscation pipeline ----------
     function obfuscateFull(source) {
-        // Remove BOM if present
+        // Remove UTF‑8 BOM if present
         if (source.charCodeAt(0) === 0xFEFF) source = source.slice(1);
 
         // Step 1: Minify and rename locals using luamin
+        if (typeof luamin === 'undefined') {
+            throw new Error('luamin not loaded');
+        }
         let minified;
         try {
             minified = luamin.minify(source);
@@ -537,9 +288,24 @@ end
         }
 
         // Step 2: Apply string/number/boolean obfuscation
-        const final = obfuscateStringsNumbersBooleans(minified);
-
+        const final = applyConstantObfuscation(minified);
         return final;
+    }
+
+    // ---------- load luamin dynamically from jsDelivr ----------
+    function ensureLuamin(callback) {
+        if (typeof luamin !== 'undefined') {
+            callback();
+        } else {
+            const script = document.createElement('script');
+            script.src = 'https://cdn.jsdelivr.net/npm/luamin@1.0.3/luamin.min.js';
+            script.onload = callback;
+            script.onerror = () => {
+                statusDiv.innerHTML = '❌ Failed to load luamin from CDN';
+                obfuscateBtn.disabled = false;
+            };
+            document.head.appendChild(script);
+        }
     }
 
     // ---------- UI ----------
@@ -598,6 +364,7 @@ end
                     const source = ev.target.result;
                     if (!source.trim()) {
                         statusDiv.innerHTML = '⚠️ file is empty';
+                        obfuscateBtn.disabled = false;
                         return;
                     }
 
