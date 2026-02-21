@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LuaU Obfuscator · CSP‑friendly</title>
+    <title>LuaU Obfuscator · CSP‑safe</title>
     <style>
         * {
             box-sizing: border-box;
@@ -156,7 +156,7 @@
 <body>
 <div class="card">
     <h1>LUAU OBFUSCATOR <span>no‑eval</span></h1>
-    <div class="sub">renames locals (regex‑based) + strings/numbers/booleans</div>
+    <div class="sub">obfuscates strings/numbers/booleans + junk code</div>
 
     <input type="file" id="fileInput" accept=".lua,.luau,.txt,.luc" />
 
@@ -176,7 +176,7 @@
     <button class="action-btn" id="obfuscateBtn">🌀 OBFUSCATE</button>
 
     <div id="status">⚡ ready</div>
-    <footer>no external libraries · CSP‑safe · regex‑based renaming</footer>
+    <footer>no external libraries · CSP‑safe</footer>
 </div>
 
 <script>
@@ -189,7 +189,6 @@
 
     let selectedFile = null;
 
-    // ---------- helper functions ----------
     function randomName() {
         const chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
         let name = '_';
@@ -201,172 +200,97 @@
         return Math.floor(Math.random() * (max - min + 1)) + min;
     }
 
-    // ---------- regex‑based local variable renaming (heuristic) ----------
-    function renameLocals(source) {
-        // We'll use a simple approach: find all "local var" declarations and replace every occurrence
-        // of that variable within its scope (between the declaration and the end of the block).
-        // This is not perfect but works for most scripts.
-
-        // First, we need to remove strings and comments to avoid replacing inside them.
-        // We'll replace strings with placeholders.
-        const strings = [];
-        let strCounter = 0;
-        let noStrings = source.replace(/(["'])((?:(?!\1).)*?)\1/g, (match) => {
-            const id = `__STR${strCounter++}__`;
-            strings.push(match);
-            return id;
-        });
-
-        // Also remove comments (single-line and multi-line)
-        noStrings = noStrings.replace(/--\[(=*)\[.*?\]\1\]/gs, '') // multi-line comments
-                             .replace(/--.*$/gm, ''); // single-line comments
-
-        // Now we have code without strings/comments. We'll scan for local declarations.
-        // We'll use a stack to track scopes (do, function, if, while, for, repeat).
-        const lines = noStrings.split('\n');
-        const scopes = [new Map()]; // each scope maps old name -> new name
-        const replacements = []; // { oldName, newName, startLine, endLine? } We'll do per-line replacement.
-
-        // Heuristic: we'll just collect all local declarations and rename them globally within the script,
-        // but that would also rename globals with the same name. To avoid that, we need to track scope.
-        // This is complex with regex. For simplicity, we'll rename all identifiers that are ever declared as local
-        // with a new name, and hope that no global conflicts occur (it's likely safe for most scripts).
-        // But that would rename global functions like "print" if they appear as local? No, they aren't declared as local.
-        // So we'll gather all names that appear in "local x" or "local function x" or function parameters.
-
-        const localNames = new Set();
-        const functionParamNames = new Set();
-
-        // Find local variable declarations
-        const localRegex = /\blocal\s+([a-zA-Z_][a-zA-Z0-9_]*)\b/g;
-        let match;
-        while ((match = localRegex.exec(noStrings)) !== null) {
-            localNames.add(match[1]);
+    // Custom string replacer that scans character by character
+    function obfuscateStrings(source, decodeName) {
+        let result = '';
+        let i = 0;
+        const len = source.length;
+        while (i < len) {
+            const ch = source[i];
+            if (ch === '"' || ch === "'") {
+                const quote = ch;
+                let j = i + 1;
+                let escaped = false;
+                while (j < len) {
+                    const c = source[j];
+                    if (!escaped && c === quote) break;
+                    if (c === '\\') escaped = !escaped;
+                    else escaped = false;
+                    j++;
+                }
+                if (j < len) {
+                    // found a complete string
+                    const content = source.substring(i + 1, j); // without quotes
+                    const key = randInt(1, 255);
+                    const encoded = [];
+                    for (let k = 0; k < content.length; k++) {
+                        encoded.push(content.charCodeAt(k) ^ key);
+                    }
+                    const encodedStr = '{' + encoded.join(',') + '}';
+                    const replacement = decodeName + '(' + encodedStr + ', ' + key + ')';
+                    result += replacement;
+                    i = j + 1;
+                    continue;
+                }
+            }
+            result += ch;
+            i++;
         }
-
-        // Find local function declarations: local function name(...)
-        const localFuncRegex = /\blocal\s+function\s+([a-zA-Z_][a-zA-Z0-9_]*)\s*\(/g;
-        while ((match = localFuncRegex.exec(noStrings)) !== null) {
-            localNames.add(match[1]);
-        }
-
-        // Find function parameters (simplified: inside parentheses after function)
-        const paramRegex = /\bfunction\s*\(([^)]*)\)/g;
-        while ((match = paramRegex.exec(noStrings)) !== null) {
-            const params = match[1].split(',').map(p => p.trim()).filter(p => p && p !== '...');
-            params.forEach(p => functionParamNames.add(p));
-        }
-
-        // Also find for-loop variables: for var in ... , for var = ...
-        const forVarRegex = /\bfor\s+([a-zA-Z_][a-zA-Z0-9_]*)\s*(?:[=,]|in)\b/g;
-        while ((match = forVarRegex.exec(noStrings)) !== null) {
-            localNames.add(match[1]);
-        }
-
-        // Merge function parameters into localNames (they are also locals)
-        functionParamNames.forEach(name => localNames.add(name));
-
-        // Now generate a new random name for each local
-        const nameMap = new Map();
-        localNames.forEach(name => {
-            nameMap.set(name, randomName());
-        });
-
-        // Apply replacements to the original source (with strings intact)
-        let result = source;
-        // Sort by length descending to avoid partial overlaps (e.g., 'a' inside 'ab')
-        const sortedNames = Array.from(nameMap.keys()).sort((a, b) => b.length - a.length);
-        sortedNames.forEach(oldName => {
-            const newName = nameMap.get(oldName);
-            // Use word boundaries to avoid replacing inside longer identifiers
-            const regex = new RegExp('\\b' + oldName + '\\b', 'g');
-            result = result.replace(regex, newName);
-        });
-
         return result;
     }
 
-    // ---------- string/number/boolean obfuscation ----------
-    function applyConstantObfuscation(source) {
-        // 1. String obfuscation
-        const decodeStrName = randomName();
-        const stringDecoder = `
-local function ${decodeStrName}(t, k)
-    local s = ""
-    for i = 1, #t do
-        s = s .. string.char(t[i] ~ k)
-    end
-    return s
-end
-`;
-
-        const stringRegex = /(["'])((?:(?!\1).)*?)\1/g;
-        const stringReplacements = [];
-        let match;
-        while ((match = stringRegex.exec(source)) !== null) {
-            const full = match[0];
-            const quote = match[1];
-            const content = match[2];
-            const key = randInt(1, 255);
-            const encoded = [];
-            for (let i = 0; i < content.length; i++) {
-                encoded.push(content.charCodeAt(i) ^ key);
-            }
-            const encodedStr = '{' + encoded.join(',') + '}';
-            const replacement = `${decodeStrName}(${encodedStr}, ${key})`;
-            stringReplacements.push({ start: match.index, end: match.index + full.length, replacement });
-        }
-        for (let i = stringReplacements.length - 1; i >= 0; i--) {
-            const r = stringReplacements[i];
-            source = source.slice(0, r.start) + r.replacement + source.slice(r.end);
-        }
-
-        // 2. Number obfuscation
+    // Number obfuscation
+    function obfuscateNumbers(source) {
         const numberRegex = /\b(-?\d+(?:\.\d+)?)\b/g;
-        const numberReplacements = [];
-        while ((match = numberRegex.exec(source)) !== null) {
-            const full = match[0];
-            const num = parseFloat(full);
+        return source.replace(numberRegex, (match) => {
+            const num = parseFloat(match);
             const a = Math.random() * 1000;
             const b = Math.random() * 1000;
             const c = a + b - num;
-            const expr = `((${a.toFixed(6)} + ${b.toFixed(6)}) - ${c.toFixed(6)})`;
-            numberReplacements.push({ start: match.index, end: match.index + full.length, replacement: expr });
-        }
-        for (let i = numberReplacements.length - 1; i >= 0; i--) {
-            const r = numberReplacements[i];
-            source = source.slice(0, r.start) + r.replacement + source.slice(r.end);
-        }
-
-        // 3. Boolean obfuscation
-        source = source.replace(/\btrue\b/g, '(1==1)');
-        source = source.replace(/\bfalse\b/g, '(1==0)');
-
-        // 4. Junk code insertion
-        const junkLines = [];
-        for (let i = 0; i < 3; i++) {
-            junkLines.push(`local ${randomName()} = ${randInt(1,1000)}`);
-        }
-        junkLines.push(`local function ${randomName()}() return "${randomName()}" end`);
-        const junkBlock = junkLines.join('; ') + '; ';
-
-        return stringDecoder + junkBlock + '\n' + source;
+            return '((' + a.toFixed(6) + ' + ' + b.toFixed(6) + ') - ' + c.toFixed(6) + ')';
+        });
     }
 
-    // ---------- main pipeline ----------
+    // Boolean obfuscation
+    function obfuscateBooleans(source) {
+        return source.replace(/\btrue\b/g, '(1==1)').replace(/\bfalse\b/g, '(1==0)');
+    }
+
+    // Junk code generation
+    function generateJunk() {
+        const lines = [];
+        for (let i = 0; i < 3; i++) {
+            lines.push(`local ${randomName()} = ${randInt(1,1000)}`);
+        }
+        lines.push(`local function ${randomName()}() return "${randomName()}" end`);
+        return lines.join('; ') + ';\n';
+    }
+
+    // Main obfuscation pipeline
     function obfuscateFull(source) {
+        // Remove UTF‑8 BOM if present
         if (source.charCodeAt(0) === 0xFEFF) source = source.slice(1);
 
-        // Step 1: rename locals using heuristic regex (no AST)
-        const renamed = renameLocals(source);
+        const decodeName = randomName();
+        const decoder = `local function ${decodeName}(t, k)\n    local s = ""\n    for i = 1, #t do\n        s = s .. string.char(t[i] ~ k)\n    end\n    return s\nend\n\n`;
 
-        // Step 2: apply constant obfuscation
-        const final = applyConstantObfuscation(renamed);
+        // Step 1: obfuscate strings
+        let processed = obfuscateStrings(source, decodeName);
+
+        // Step 2: obfuscate numbers
+        processed = obfuscateNumbers(processed);
+
+        // Step 3: obfuscate booleans
+        processed = obfuscateBooleans(processed);
+
+        // Step 4: add junk and decoder at top
+        const junk = generateJunk();
+        const final = decoder + junk + processed;
 
         return final;
     }
 
-    // ---------- UI ----------
+    // UI
     function updateFileInfo(file) {
         if (file) fileNameDiv.innerHTML = `📄 ${file.name}  (${(file.size / 1024).toFixed(1)} KB)`;
         else fileNameDiv.innerHTML = '📄 no file selected';
