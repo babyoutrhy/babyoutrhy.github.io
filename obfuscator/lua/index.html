@@ -3,10 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Advanced LuaU Obfuscator · Full Identifier Renaming</title>
-    <!-- Load required libraries -->
-    <script src="https://cdn.jsdelivr.net/npm/luaparse@0.3.1/luaparse.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/luamin@1.0.3/dist/luamin.min.js"></script>
+    <title>Advanced LuaU Obfuscator · CSP‑safe</title>
+    <script src="https://unpkg.com/luaparse@0.3.1/luaparse.min.js"></script>
     <style>
         * {
             box-sizing: border-box;
@@ -158,8 +156,8 @@
 </head>
 <body>
 <div class="card">
-    <h1>LUAU OBFUSCATOR <span>full rename</span></h1>
-    <div class="sub">renames all locals + strings/numbers/booleans · multi‑layer</div>
+    <h1>LUAU OBFUSCATOR <span>CSP‑safe</span></h1>
+    <div class="sub">renames all locals + strings/numbers/booleans · no eval</div>
 
     <input type="file" id="fileInput" accept=".lua,.luau,.txt,.luc" />
 
@@ -179,7 +177,7 @@
     <button class="action-btn" id="obfuscateBtn">🌀 OBFUSCATE</button>
 
     <div id="status">⚡ ready</div>
-    <footer>output uses AST renaming + encrypted strings / numbers / booleans</footer>
+    <footer>AST‑based renaming + encrypted strings/numbers/booleans</footer>
 </div>
 
 <script>
@@ -192,9 +190,8 @@
 
     let selectedFile = null;
 
-    // Check if required libraries are loaded
-    if (typeof luaparse === 'undefined' || typeof luamin === 'undefined') {
-        statusDiv.innerHTML = '❌ Failed to load required libraries (luaparse/luamin). Please check your internet connection.';
+    if (typeof luaparse === 'undefined') {
+        statusDiv.innerHTML = '❌ Failed to load luaparse';
         obfuscateBtn.disabled = true;
     }
 
@@ -210,7 +207,374 @@
         return Math.floor(Math.random() * (max - min + 1)) + min;
     }
 
-    // ---------- string/number/boolean obfuscation (applied after minification) ----------
+    // ---------- AST‑based local variable renaming ----------
+    function renameLocals(source) {
+        let ast;
+        try {
+            ast = luaparse.parse(source, { luaVersion: '5.1', comments: false, locations: false });
+        } catch (e) {
+            throw new Error(`Parsing failed: ${e.message}`);
+        }
+
+        // Scope stack: each scope maps original name -> new name
+        const scopeStack = [{}];
+
+        // We'll collect replacements as we go: we need to know the original positions to replace.
+        // Since we're generating code from scratch, we'll rebuild the source from the modified AST.
+        // That's easier than trying to replace parts. So we'll implement a code generator.
+
+        // Step 1: Walk the AST, collect local declarations, assign new names.
+        // We'll store the new names in the AST nodes themselves (e.g., node._newName) for identifiers that are declarations.
+        // For identifier references, we'll later use the scope mapping to rename them during code generation.
+
+        // Helper to get current scope
+        function currentScope() {
+            return scopeStack[scopeStack.length - 1];
+        }
+
+        function pushScope() {
+            scopeStack.push({});
+        }
+
+        function popScope() {
+            scopeStack.pop();
+        }
+
+        // Recursively process the AST, adding new names for declarations
+        function process(node) {
+            if (!node || typeof node !== 'object') return;
+
+            // Handle nodes that introduce new locals
+            if (node.type === 'FunctionDeclaration' || node.type === 'FunctionExpression') {
+                // Parameters become locals in the new function scope
+                pushScope();
+                const scope = currentScope();
+                if (node.parameters) {
+                    node.parameters.forEach(param => {
+                        if (param.type === 'Identifier') {
+                            const newName = randomName();
+                            scope[param.name] = newName;
+                            // Store the new name in the parameter node for later generation
+                            param._newName = newName;
+                        }
+                        // ignore '...'
+                    });
+                }
+                // Process the body
+                if (node.body) process(node.body);
+                popScope();
+                return;
+            }
+
+            if (node.type === 'LocalStatement') {
+                const scope = currentScope();
+                node.variables.forEach(v => {
+                    if (v.type === 'Identifier') {
+                        const newName = randomName();
+                        scope[v.name] = newName;
+                        v._newName = newName; // mark for code generation
+                    }
+                });
+                // process init expressions
+                if (node.init) node.init.forEach(init => process(init));
+                return;
+            }
+
+            if (node.type === 'ForGenericStatement' || node.type === 'ForNumericStatement') {
+                pushScope();
+                const scope = currentScope();
+                if (node.variables) {
+                    node.variables.forEach(v => {
+                        if (v.type === 'Identifier') {
+                            const newName = randomName();
+                            scope[v.name] = newName;
+                            v._newName = newName;
+                        }
+                    });
+                }
+                // process range expressions and body
+                if (node.left) process(node.left);
+                if (node.right) process(node.right);
+                if (node.step) process(node.step);
+                if (node.body) process(node.body);
+                popScope();
+                return;
+            }
+
+            // For block‑containing nodes (if, while, repeat), we need to handle their bodies as new scopes
+            // because local declarations inside them are not visible outside.
+            // In Lua, blocks (then/else/do) create a new scope.
+            if (node.type === 'IfStatement') {
+                node.clauses.forEach(clause => {
+                    // condition is in outer scope
+                    if (clause.condition) process(clause.condition);
+                    // body is a new scope
+                    pushScope();
+                    if (clause.body) process(clause.body);
+                    popScope();
+                });
+                return;
+            }
+
+            if (node.type === 'WhileStatement' || node.type === 'RepeatStatement') {
+                if (node.condition) process(node.condition);
+                pushScope();
+                if (node.body) process(node.body);
+                popScope();
+                return;
+            }
+
+            if (node.type === 'DoStatement') {
+                pushScope();
+                if (node.body) process(node.body);
+                popScope();
+                return;
+            }
+
+            // For all other nodes, just recurse
+            for (let key in node) {
+                if (node.hasOwnProperty(key)) {
+                    const child = node[key];
+                    if (Array.isArray(child)) {
+                        child.forEach(item => process(item));
+                    } else {
+                        process(child);
+                    }
+                }
+            }
+        }
+
+        process(ast);
+
+        // Step 2: Code generation from the modified AST
+        // We'll write a recursive function that returns Lua source for a node.
+        // It will use scope stack to rename identifier references, and use _newName for declarations.
+
+        // Reset scope stack for code generation (same scoping rules)
+        scopeStack.length = 0;
+        scopeStack.push({});
+
+        function generate(node) {
+            if (!node) return '';
+            if (Array.isArray(node)) {
+                // For a block (list of statements), join with newlines
+                return node.map(generate).join('\n');
+            }
+
+            switch (node.type) {
+                case 'Chunk':
+                    return generate(node.body);
+
+                case 'FunctionDeclaration':
+                case 'FunctionExpression': {
+                    pushScope(); // new scope for parameters and body
+                    const params = node.parameters.map(p => {
+                        if (p.type === 'Identifier') {
+                            // use _newName if available, else name
+                            const name = p._newName || p.name;
+                            // also add to scope for body references
+                            currentScope()[p.name] = name;
+                            return name;
+                        }
+                        return '...'; // vararg
+                    }).join(', ');
+                    const body = generate(node.body);
+                    popScope();
+                    return `function(${params})\n${body}\nend`;
+                }
+
+                case 'LocalStatement': {
+                    const vars = node.variables.map(v => v._newName || v.name).join(', ');
+                    const inits = node.init ? node.init.map(generate).join(', ') : '';
+                    if (inits) {
+                        return `local ${vars} = ${inits}`;
+                    } else {
+                        return `local ${vars}`;
+                    }
+                }
+
+                case 'AssignmentStatement': {
+                    const vars = node.variables.map(generate).join(', ');
+                    const inits = node.init.map(generate).join(', ');
+                    return `${vars} = ${inits}`;
+                }
+
+                case 'CallStatement':
+                    return generate(node.expression);
+
+                case 'CallExpression': {
+                    const base = generate(node.base);
+                    const args = node.arguments.map(generate).join(', ');
+                    return `${base}(${args})`;
+                }
+
+                case 'StringCallExpression':
+                case 'TableCallExpression':
+                    // Not implemented for simplicity; fallback to basic
+                    return generate(node.base) + '(' + generate(node.argument) + ')';
+
+                case 'IndexExpression': {
+                    const base = generate(node.base);
+                    if (node.index.type === 'StringLiteral') {
+                        // a.b style
+                        return base + '.' + node.index.raw.replace(/['"]/g, '');
+                    } else {
+                        return base + '[' + generate(node.index) + ']';
+                    }
+                }
+
+                case 'MemberExpression': {
+                    const base = generate(node.base);
+                    const identifier = node.identifier.name; // assume Identifier
+                    return base + '.' + identifier;
+                }
+
+                case 'Identifier': {
+                    // look up in scope stack from top
+                    for (let i = scopeStack.length - 1; i >= 0; i--) {
+                        const scope = scopeStack[i];
+                        if (scope.hasOwnProperty(node.name)) {
+                            return scope[node.name];
+                        }
+                    }
+                    // not found: global, keep as is
+                    return node.name;
+                }
+
+                case 'StringLiteral':
+                    return node.raw; // keep original quotes
+
+                case 'NumericLiteral':
+                    return node.raw;
+
+                case 'BooleanLiteral':
+                    return node.value ? 'true' : 'false';
+
+                case 'NilLiteral':
+                    return 'nil';
+
+                case 'VarargLiteral':
+                    return '...';
+
+                case 'TableConstructorExpression': {
+                    const fields = node.fields.map(f => {
+                        if (f.type === 'TableKey') {
+                            return '[' + generate(f.key) + '] = ' + generate(f.value);
+                        } else if (f.type === 'TableKeyString') {
+                            return f.key.name + ' = ' + generate(f.value);
+                        } else { // TableValue
+                            return generate(f.value);
+                        }
+                    }).join(', ');
+                    return '{' + fields + '}';
+                }
+
+                case 'UnaryExpression': {
+                    const op = node.operator;
+                    const arg = generate(node.argument);
+                    return op + arg;
+                }
+
+                case 'BinaryExpression': {
+                    const left = generate(node.left);
+                    const right = generate(node.right);
+                    return left + ' ' + node.operator + ' ' + right;
+                }
+
+                case 'LogicalExpression': {
+                    const left = generate(node.left);
+                    const right = generate(node.right);
+                    return left + ' ' + node.operator + ' ' + right;
+                }
+
+                case 'IfStatement': {
+                    let out = '';
+                    node.clauses.forEach((clause, idx) => {
+                        if (clause.type === 'IfClause') {
+                            out += 'if ' + generate(clause.condition) + ' then\n';
+                        } else if (clause.type === 'ElseifClause') {
+                            out += 'elseif ' + generate(clause.condition) + ' then\n';
+                        } else if (clause.type === 'ElseClause') {
+                            out += 'else\n';
+                        }
+                        // body
+                        pushScope();
+                        out += generate(clause.body);
+                        popScope();
+                        out += '\n';
+                    });
+                    out += 'end';
+                    return out;
+                }
+
+                case 'WhileStatement': {
+                    pushScope();
+                    const body = generate(node.body);
+                    popScope();
+                    return 'while ' + generate(node.condition) + ' do\n' + body + '\nend';
+                }
+
+                case 'RepeatStatement': {
+                    pushScope();
+                    const body = generate(node.body);
+                    popScope();
+                    return 'repeat\n' + body + '\nuntil ' + generate(node.condition);
+                }
+
+                case 'ForNumericStatement': {
+                    pushScope();
+                    const varName = node.variable._newName || node.variable.name;
+                    currentScope()[node.variable.name] = varName;
+                    const start = generate(node.start);
+                    const end = generate(node.end);
+                    const step = node.step ? generate(node.step) : '';
+                    const body = generate(node.body);
+                    popScope();
+                    return 'for ' + varName + ' = ' + start + ', ' + end + (step ? ', ' + step : '') + ' do\n' + body + '\nend';
+                }
+
+                case 'ForGenericStatement': {
+                    pushScope();
+                    const vars = node.variables.map(v => {
+                        const newName = v._newName || v.name;
+                        currentScope()[v.name] = newName;
+                        return newName;
+                    }).join(', ');
+                    const iterators = node.iterators.map(generate).join(', ');
+                    const body = generate(node.body);
+                    popScope();
+                    return 'for ' + vars + ' in ' + iterators + ' do\n' + body + '\nend';
+                }
+
+                case 'ReturnStatement': {
+                    const args = node.arguments.map(generate).join(', ');
+                    return 'return ' + args;
+                }
+
+                case 'BreakStatement':
+                    return 'break';
+
+                case 'GotoStatement':
+                    return 'goto ' + node.label;
+
+                case 'LabelStatement':
+                    return '::' + node.label + '::';
+
+                case 'Comment':
+                    return ''; // drop comments
+
+                default:
+                    // For unsupported node types, try to stringify or return empty
+                    console.warn('Unsupported node type:', node.type);
+                    return '';
+            }
+        }
+
+        const renamedSource = generate(ast);
+        return renamedSource;
+    }
+
+    // ---------- string/number/boolean obfuscation (same as before) ----------
     function applyConstantObfuscation(source) {
         // 1. String obfuscation
         const decodeStrName = randomName();
@@ -245,13 +609,12 @@ end
             source = source.slice(0, r.start) + r.replacement + source.slice(r.end);
         }
 
-        // 2. Number obfuscation (simple arithmetic)
+        // 2. Number obfuscation
         const numberRegex = /\b(-?\d+(?:\.\d+)?)\b/g;
         const numberReplacements = [];
         while ((match = numberRegex.exec(source)) !== null) {
             const full = match[0];
             const num = parseFloat(full);
-            // skip if it's part of a larger number (unlikely with word boundaries)
             const a = Math.random() * 1000;
             const b = Math.random() * 1000;
             const c = a + b - num;
@@ -267,7 +630,7 @@ end
         source = source.replace(/\btrue\b/g, '(1==1)');
         source = source.replace(/\bfalse\b/g, '(1==0)');
 
-        // 4. Junk code insertion (top of script)
+        // 4. Junk code insertion
         const junkLines = [];
         for (let i = 0; i < 3; i++) {
             junkLines.push(`local ${randomName()} = ${randInt(1,1000)}`);
@@ -278,21 +641,16 @@ end
         return stringDecoder + junkBlock + '\n' + source;
     }
 
-    // ---------- main obfuscation pipeline ----------
+    // ---------- main pipeline ----------
     function obfuscateFull(source) {
-        // Remove UTF‑8 BOM if present
         if (source.charCodeAt(0) === 0xFEFF) source = source.slice(1);
 
-        // Step 1: Minify and rename locals using luamin
-        let minified;
-        try {
-            minified = luamin.minify(source);
-        } catch (e) {
-            throw new Error(`luamin failed: ${e.message}`);
-        }
+        // Step 1: rename locals using AST
+        const renamed = renameLocals(source);
 
-        // Step 2: Apply string/number/boolean obfuscation
-        const final = applyConstantObfuscation(minified);
+        // Step 2: apply constant obfuscation
+        const final = applyConstantObfuscation(renamed);
+
         return final;
     }
 
