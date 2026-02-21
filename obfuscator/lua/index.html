@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LuaU Obfuscator · file selector & download</title>
+    <title>LuaU Obfuscator</title>
     <style>
         * {
             box-sizing: border-box;
@@ -159,13 +159,11 @@
 </head>
 <body>
 <div class="card">
-    <h1>LUAU OBFUSCATOR <span>beta</span></h1>
-    <div class="sub">encode your script into a byte‑array + loader</div>
+    <h1>LUAU OBFUSCATOR <span>advanced</span></h1>
+    <div class="sub">multi‑layer obfuscation · string/number encoding · junk code</div>
 
-    <!-- hidden file input -->
     <input type="file" id="fileInput" accept=".lua,.luau,.txt,.luc" />
 
-    <!-- custom drop / click area -->
     <div class="file-area" id="dropArea">
         <label for="fileInput">
             <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round">
@@ -177,100 +175,140 @@
         </label>
     </div>
 
-    <!-- display selected file name -->
     <div id="fileName">📄 no file selected</div>
 
-    <!-- obfuscate button -->
-    <button class="action-btn" id="obfuscateBtn">✨ OBFUSCATE</button>
+    <button class="action-btn" id="obfuscateBtn">🌀 OBFUSCATE</button>
 
-    <!-- status area -->
     <div id="status">⚡ ready</div>
-    <footer>output will be downloaded as .lua · byte‑array + loadstring</footer>
+    <footer>output includes decoder + encrypted constants · not just byte‑dump</footer>
 </div>
 
 <script>
 (function() {
-    // DOM elements
     const fileInput = document.getElementById('fileInput');
     const dropArea = document.getElementById('dropArea');
     const fileNameDiv = document.getElementById('fileName');
     const obfuscateBtn = document.getElementById('obfuscateBtn');
     const statusDiv = document.getElementById('status');
 
-    // track current file
     let selectedFile = null;
 
-    // ---- random name generator for Lua variables (obfuscated locals) ----
+    // ---------- helper functions ----------
     function randomName() {
         const chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
         let name = '_';
-        for (let i = 0; i < 9; i++) {
-            name += chars[Math.floor(Math.random() * chars.length)];
-        }
+        for (let i = 0; i < 9; i++) name += chars[Math.floor(Math.random() * chars.length)];
         return name;
     }
 
-    // ---- convert byte array (Uint8Array) to obfuscated Lua script ----
-    function generateLuaScript(bytes) {
-        // generate random internal variable names
-        const byteTable = randomName();
-        const resultStr = randomName();
-        const loopIdx = randomName();
-        const junkA = randomName();
-        const junkB = randomName();
+    // simple random integer
+    function randInt(min, max) {
+        return Math.floor(Math.random() * (max - min + 1)) + min;
+    }
+
+    // ---------- obfuscation core ----------
+    function obfuscateLua(source) {
+        // 1. remove any UTF-8 BOM
+        if (source.charCodeAt(0) === 0xFEFF) source = source.slice(1);
+
+        // 2. generate random "decoder" names
+        const decodeStrName = randomName();
+        const decodeNumName = randomName();
+        const junkVar1 = randomName();
+        const junkVar2 = randomName();
         const junkFunc = randomName();
 
-        // create comma-separated list of bytes
-        const byteList = Array.from(bytes).join(', ');
-
-        // Lua script template
-        return `-- Luau obfuscator · bytecode array
--- (generated, do not edit manually)
-
-local ${junkA} = "✨ obfuscated"
-local ${junkB} = math.random(1,999)
-
--- byte table (raw values)
-local ${byteTable} = { ${byteList} }
-
--- reconstruct original string
-local ${resultStr} = ""
-for ${loopIdx}=1, #${byteTable} do
-    ${resultStr} = ${resultStr} .. string.char(${byteTable}[${loopIdx}])
-end
-
--- junk insertion (unused)
-local function ${junkFunc}() return "${randomName()}" end
-
--- load and execute original script
-loadstring(${resultStr})()
--- end of obfuscated block
-`;
-    }
-
-    // ---- download blob as file ----
-    function downloadBlob(content, fileName) {
-        const blob = new Blob([content], { type: 'text/plain;charset=utf-8' });
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = fileName;
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-        URL.revokeObjectURL(url);
-    }
-
-    // ---- update UI with file name ----
-    function updateFileInfo(file) {
-        if (file) {
-            fileNameDiv.innerHTML = `📄 ${file.name}  (${(file.size / 1024).toFixed(1)} KB)`;
-        } else {
-            fileNameDiv.innerHTML = '📄 no file selected';
+        // 3. string obfuscation: find all quoted strings (simple version – no escaped quotes inside)
+        //    we'll replace each string with a call to the string decoder
+        const stringRegex = /(["'])((?:(?!\1).)*?)\1/g;
+        const stringReplacements = [];
+        let match;
+        while ((match = stringRegex.exec(source)) !== null) {
+            const full = match[0];
+            const quote = match[1];
+            const content = match[2];
+            // encode each character with XOR using a random key (0-255)
+            const key = randInt(1, 255);
+            const encoded = [];
+            for (let i = 0; i < content.length; i++) {
+                encoded.push(content.charCodeAt(i) ^ key);
+            }
+            // we'll store the encoded array and key, and replace with a call
+            const encodedStr = '{' + encoded.join(',') + '}';
+            const replacement = `${decodeStrName}(${encodedStr}, ${key})`;
+            // store replacement info (we'll apply after all matches to avoid index shifting)
+            stringReplacements.push({ start: match.index, end: match.index + full.length, replacement });
         }
+        // apply replacements from end to start to keep indices valid
+        let result = source;
+        for (let i = stringReplacements.length - 1; i >= 0; i--) {
+            const r = stringReplacements[i];
+            result = result.slice(0, r.start) + r.replacement + result.slice(r.end);
+        }
+
+        // 4. number obfuscation: find all numbers (integers/floats) and replace with arithmetic expressions
+        //    regex for numbers: optional minus, digits, optional decimal part
+        const numberRegex = /\b(-?\d+(?:\.\d+)?)\b/g;
+        const numberReplacements = [];
+        while ((match = numberRegex.exec(result)) !== null) {
+            const full = match[0];
+            const num = parseFloat(full);
+            // generate a random expression that yields the same number
+            // we'll create something like (a + b - c) where a,b,c are random but sum to num
+            const a = Math.random() * 1000;
+            const b = Math.random() * 1000;
+            const c = a + b - num;  // so a + b - c = num
+            // round to avoid floating errors? we'll use exact math
+            // format numbers nicely
+            const expr = `((${a.toFixed(6)} + ${b.toFixed(6)}) - ${c.toFixed(6)})`;
+            numberReplacements.push({ start: match.index, end: match.index + full.length, replacement: expr });
+        }
+        for (let i = numberReplacements.length - 1; i >= 0; i--) {
+            const r = numberReplacements[i];
+            result = result.slice(0, r.start) + r.replacement + result.slice(r.end);
+        }
+
+        // 5. boolean obfuscation: replace true/false with expressions
+        result = result.replace(/\btrue\b/g, '(1==1)');
+        result = result.replace(/\bfalse\b/g, '(1==0)');
+        // nil stays as nil, but we could also obfuscate (maybe leave)
+
+        // 6. add junk code at the top (random variables and a dummy function)
+        const junkLines = [];
+        for (let i = 0; i < 3; i++) {
+            junkLines.push(`local ${randomName()} = ${randInt(1,1000)}`);
+        }
+        junkLines.push(`local function ${junkFunc}() return "${randomName()}" end`);
+        const junkBlock = junkLines.join('; ') + '; ';
+
+        // 7. build the decoder functions (string and number decoders)
+        // string decoder: takes encoded table and key, returns original string
+        const stringDecoder = `
+local function ${decodeStrName}(t, k)
+    local s = ""
+    for i = 1, #t do
+        s = s .. string.char(t[i] ~ k)
+    end
+    return s
+end
+`;
+
+        // number decoder is not needed because we already replaced numbers with expressions,
+        // but we could add a dummy function for junk
+        const numberDecoder = `local function ${decodeNumName}(x) return x end -- dummy`;
+
+        // 8. combine everything
+        const finalScript = stringDecoder + numberDecoder + '\n' + junkBlock + '\n' + result;
+
+        return finalScript;
     }
 
-    // ---- handle selected file (from input or drop) ----
+    // ---------- UI & file handling ----------
+    function updateFileInfo(file) {
+        if (file) fileNameDiv.innerHTML = `📄 ${file.name}  (${(file.size / 1024).toFixed(1)} KB)`;
+        else fileNameDiv.innerHTML = '📄 no file selected';
+    }
+
     function handleFile(file) {
         if (!file) return;
         selectedFile = file;
@@ -278,12 +316,8 @@ loadstring(${resultStr})()
         statusDiv.innerHTML = '✅ file loaded, ready to obfuscate';
     }
 
-    // ---- file input change ----
-    fileInput.addEventListener('change', (e) => {
-        handleFile(e.target.files[0]);
-    });
+    fileInput.addEventListener('change', (e) => handleFile(e.target.files[0]));
 
-    // ---- drag & drop handlers ----
     dropArea.addEventListener('dragover', (e) => {
         e.preventDefault();
         dropArea.style.borderColor = '#b3a0ff';
@@ -307,10 +341,11 @@ loadstring(${resultStr})()
         }
     });
 
-    // ---- main obfuscation logic ----
+    dropArea.addEventListener('click', () => fileInput.click());
+
     obfuscateBtn.addEventListener('click', () => {
         if (!selectedFile) {
-            statusDiv.innerHTML = '⚠️ select a .lua / .luau file first';
+            statusDiv.innerHTML = '⚠️ select a file first';
             return;
         }
 
@@ -318,42 +353,35 @@ loadstring(${resultStr})()
         obfuscateBtn.disabled = true;
 
         const reader = new FileReader();
-        reader.onload = function(ev) {
+        reader.onload = (ev) => {
             try {
-                // get raw bytes as ArrayBuffer → Uint8Array
-                const arrayBuffer = ev.target.result;
-                let bytes = new Uint8Array(arrayBuffer);
-
-                // --- Strip UTF-8 BOM if present (EF BB BF) ---
-                if (bytes.length >= 3 && bytes[0] === 0xEF && bytes[1] === 0xBB && bytes[2] === 0xBF) {
-                    // Create a new Uint8Array without the first three bytes
-                    bytes = bytes.slice(3);
-                    if (DEBUG_MODE) console.log('Stripped UTF-8 BOM');
+                const source = ev.target.result; // read as text
+                if (!source.trim()) {
+                    statusDiv.innerHTML = '⚠️ file is empty';
+                    return;
                 }
 
-                // if file is empty, warn but still generate
-                if (bytes.length === 0) {
-                    statusDiv.innerHTML = '⚠️ file is empty, but generating dummy';
-                }
+                const obfuscated = obfuscateLua(source);
 
-                // generate obfuscated Lua code
-                const obfuscatedCode = generateLuaScript(bytes);
-
-                // generate output filename
                 let baseName = selectedFile.name;
                 const lastDot = baseName.lastIndexOf('.');
-                if (lastDot !== -1) {
-                    baseName = baseName.substring(0, lastDot);
-                }
+                if (lastDot !== -1) baseName = baseName.substring(0, lastDot);
                 const outputName = baseName + '_obfuscated.lua';
 
-                // trigger download
-                downloadBlob(obfuscatedCode, outputName);
+                const blob = new Blob([obfuscated], { type: 'text/plain;charset=utf-8' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = outputName;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
 
                 statusDiv.innerHTML = '🎉 obfuscation complete – download started';
             } catch (err) {
                 console.error(err);
-                statusDiv.innerHTML = '❌ error during obfuscation: ' + err.message;
+                statusDiv.innerHTML = '❌ error: ' + err.message;
             } finally {
                 obfuscateBtn.disabled = false;
             }
@@ -364,19 +392,10 @@ loadstring(${resultStr})()
             obfuscateBtn.disabled = false;
         };
 
-        reader.readAsArrayBuffer(selectedFile);
+        reader.readAsText(selectedFile); // read as text to process literals
     });
 
-    // ---- click on drop area triggers file input ----
-    dropArea.addEventListener('click', () => {
-        fileInput.click();
-    });
-
-    // ---- initial state ----
     updateFileInfo(null);
-
-    // small debug flag (not shown in UI)
-    const DEBUG_MODE = false;
 })();
 </script>
 </body>
