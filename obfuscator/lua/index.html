@@ -212,13 +212,13 @@
 
     // ---- convert byte array (Uint8Array) to obfuscated Lua script ----
     function generateLuaScript(bytes) {
-        // generate random internal variable names (makes reverse engineering slightly harder)
-        const byteTable = randomName();      // table holding byte values
-        const resultStr = randomName();      // reconstructed string
-        const loopIdx = randomName();        // loop counter
-        const junkA = randomName();          // junk variable
-        const junkB = randomName();          // junk variable
-        const junkFunc = randomName();       // junk function
+        // generate random internal variable names
+        const byteTable = randomName();
+        const resultStr = randomName();
+        const loopIdx = randomName();
+        const junkA = randomName();
+        const junkB = randomName();
+        const junkFunc = randomName();
 
         // create comma-separated list of bytes
         const byteList = Array.from(bytes).join(', ');
@@ -273,7 +273,6 @@ loadstring(${resultStr})()
     // ---- handle selected file (from input or drop) ----
     function handleFile(file) {
         if (!file) return;
-        // accept any file (we'll treat as binary)
         selectedFile = file;
         updateFileInfo(file);
         statusDiv.innerHTML = '✅ file loaded, ready to obfuscate';
@@ -303,7 +302,6 @@ loadstring(${resultStr})()
         dropArea.style.background = '#13111c';
         const file = e.dataTransfer.files[0];
         if (file) {
-            // sync the file input (nice to have, but not required)
             fileInput.files = e.dataTransfer.files;
             handleFile(file);
         }
@@ -324,9 +322,16 @@ loadstring(${resultStr})()
             try {
                 // get raw bytes as ArrayBuffer → Uint8Array
                 const arrayBuffer = ev.target.result;
-                const bytes = new Uint8Array(arrayBuffer);
+                let bytes = new Uint8Array(arrayBuffer);
 
-                // if file is empty, warn but still generate (empty script)
+                // --- Strip UTF-8 BOM if present (EF BB BF) ---
+                if (bytes.length >= 3 && bytes[0] === 0xEF && bytes[1] === 0xBB && bytes[2] === 0xBF) {
+                    // Create a new Uint8Array without the first three bytes
+                    bytes = bytes.slice(3);
+                    if (DEBUG_MODE) console.log('Stripped UTF-8 BOM');
+                }
+
+                // if file is empty, warn but still generate
                 if (bytes.length === 0) {
                     statusDiv.innerHTML = '⚠️ file is empty, but generating dummy';
                 }
@@ -336,7 +341,6 @@ loadstring(${resultStr})()
 
                 // generate output filename
                 let baseName = selectedFile.name;
-                // remove extension if present, then add _obfuscated.lua
                 const lastDot = baseName.lastIndexOf('.');
                 if (lastDot !== -1) {
                     baseName = baseName.substring(0, lastDot);
@@ -360,7 +364,6 @@ loadstring(${resultStr})()
             obfuscateBtn.disabled = false;
         };
 
-        // read as ArrayBuffer to get raw binary (preserves all bytes)
         reader.readAsArrayBuffer(selectedFile);
     });
 
@@ -371,6 +374,9 @@ loadstring(${resultStr})()
 
     // ---- initial state ----
     updateFileInfo(null);
+
+    // small debug flag (not shown in UI)
+    const DEBUG_MODE = false;
 })();
 </script>
 </body>
