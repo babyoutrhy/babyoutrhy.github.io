@@ -145,10 +145,6 @@
             text-align: center;
             transition: 0.2s;
         }
-        .glow {
-            color: #d3c6ff;
-            font-weight: 500;
-        }
         footer {
             margin-top: 1.8rem;
             color: #4b4465;
@@ -156,11 +152,13 @@
             text-align: center;
         }
     </style>
+    <!-- Load luaparse from CDN for full Lua parsing -->
+    <script src="https://unpkg.com/luaparse@0.3.1/luaparse.min.js"></script>
 </head>
 <body>
 <div class="card">
-    <h1>LUAU OBFUSCATOR <span>advanced</span></h1>
-    <div class="sub">multi‑layer obfuscation · string/number encoding · junk code</div>
+    <h1>LUAU OBFUSCATOR <span>full rename</span></h1>
+    <div class="sub">renames all locals + strings/numbers/booleans · multi‑layer</div>
 
     <input type="file" id="fileInput" accept=".lua,.luau,.txt,.luc" />
 
@@ -180,7 +178,7 @@
     <button class="action-btn" id="obfuscateBtn">🌀 OBFUSCATE</button>
 
     <div id="status">⚡ ready</div>
-    <footer>output includes decoder + encrypted constants · not just byte‑dump</footer>
+    <footer>output uses AST renaming + encrypted strings / numbers / booleans</footer>
 </div>
 
 <script>
@@ -197,92 +195,205 @@
     function randomName() {
         const chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
         let name = '_';
-        for (let i = 0; i < 9; i++) name += chars[Math.floor(Math.random() * chars.length)];
+        for (let i = 0; i < 12; i++) name += chars[Math.floor(Math.random() * chars.length)];
         return name;
     }
 
-    // simple random integer
     function randInt(min, max) {
         return Math.floor(Math.random() * (max - min + 1)) + min;
     }
 
-    // ---------- obfuscation core ----------
-    function obfuscateLua(source) {
-        // 1. remove any UTF-8 BOM
-        if (source.charCodeAt(0) === 0xFEFF) source = source.slice(1);
+    // ---------- rename all local identifiers using luaparse ----------
+    function renameIdentifiers(source) {
+        // parse the source into AST
+        let ast;
+        try {
+            ast = luaparse.parse(source, { luaVersion: '5.1' });
+        } catch (e) {
+            throw new Error(`Parsing failed: ${e.message}`);
+        }
 
-        // 2. generate random "decoder" names
-        const decodeStrName = randomName();
-        const decodeNumName = randomName();
-        const junkVar1 = randomName();
-        const junkVar2 = randomName();
-        const junkFunc = randomName();
+        const scopeStack = [{}]; // start with global scope (no local declarations)
+        const renameMap = new Map(); // for identifiers we encounter, we'll store their scoped name
 
-        // 3. string obfuscation: find all quoted strings (simple version – no escaped quotes inside)
-        //    we'll replace each string with a call to the string decoder
-        const stringRegex = /(["'])((?:(?!\1).)*?)\1/g;
-        const stringReplacements = [];
-        let match;
-        while ((match = stringRegex.exec(source)) !== null) {
-            const full = match[0];
-            const quote = match[1];
-            const content = match[2];
-            // encode each character with XOR using a random key (0-255)
-            const key = randInt(1, 255);
-            const encoded = [];
-            for (let i = 0; i < content.length; i++) {
-                encoded.push(content.charCodeAt(i) ^ key);
+        // Helper to get current scope
+        function currentScope() {
+            return scopeStack[scopeStack.length - 1];
+        }
+
+        // Helper to push a new scope (function, for loop, etc.)
+        function pushScope() {
+            scopeStack.push({});
+        }
+
+        function popScope() {
+            scopeStack.pop();
+        }
+
+        // Function to rename an identifier node: look up in scope stack from top to bottom
+        function renameIdentifier(node) {
+            if (!node || node.type !== 'Identifier') return;
+            const name = node.name;
+            for (let i = scopeStack.length - 1; i >= 0; i--) {
+                const scope = scopeStack[i];
+                if (scope[name] !== undefined) {
+                    node.name = scope[name];
+                    return;
+                }
             }
-            // we'll store the encoded array and key, and replace with a call
-            const encodedStr = '{' + encoded.join(',') + '}';
-            const replacement = `${decodeStrName}(${encodedStr}, ${key})`;
-            // store replacement info (we'll apply after all matches to avoid index shifting)
-            stringReplacements.push({ start: match.index, end: match.index + full.length, replacement });
-        }
-        // apply replacements from end to start to keep indices valid
-        let result = source;
-        for (let i = stringReplacements.length - 1; i >= 0; i--) {
-            const r = stringReplacements[i];
-            result = result.slice(0, r.start) + r.replacement + result.slice(r.end);
+            // Not found in any local scope -> it's a global; leave unchanged.
         }
 
-        // 4. number obfuscation: find all numbers (integers/floats) and replace with arithmetic expressions
-        //    regex for numbers: optional minus, digits, optional decimal part
-        const numberRegex = /\b(-?\d+(?:\.\d+)?)\b/g;
-        const numberReplacements = [];
-        while ((match = numberRegex.exec(result)) !== null) {
-            const full = match[0];
-            const num = parseFloat(full);
-            // generate a random expression that yields the same number
-            // we'll create something like (a + b - c) where a,b,c are random but sum to num
-            const a = Math.random() * 1000;
-            const b = Math.random() * 1000;
-            const c = a + b - num;  // so a + b - c = num
-            // round to avoid floating errors? we'll use exact math
-            // format numbers nicely
-            const expr = `((${a.toFixed(6)} + ${b.toFixed(6)}) - ${c.toFixed(6)})`;
-            numberReplacements.push({ start: match.index, end: match.index + full.length, replacement: expr });
-        }
-        for (let i = numberReplacements.length - 1; i >= 0; i--) {
-            const r = numberReplacements[i];
-            result = result.slice(0, r.start) + r.replacement + result.slice(r.end);
+        // Recursive walk function
+        function walk(node) {
+            if (!node || typeof node !== 'object') return;
+
+            // Handle different node types that introduce new locals
+            if (node.type === 'FunctionDeclaration' || node.type === 'FunctionExpression') {
+                // Parameters become locals in the new scope
+                pushScope();
+                const scope = currentScope();
+                if (node.parameters) {
+                    node.parameters.forEach(param => {
+                        if (param.type === 'Identifier') {
+                            const newName = randomName();
+                            scope[param.name] = newName;
+                            param.name = newName; // rename directly
+                        }
+                        // else might be '...' or something, ignore
+                    });
+                }
+                // walk the body after setting parameters
+                if (node.body) walk(node.body);
+                popScope();
+                return;
+            }
+
+            if (node.type === 'LocalStatement') {
+                // Declare new local variables
+                const scope = currentScope();
+                node.variables.forEach((v, idx) => {
+                    if (v.type === 'Identifier') {
+                        const newName = randomName();
+                        scope[v.name] = newName;
+                        v.name = newName; // rename declaration
+                    }
+                });
+                // walk the init if present
+                if (node.init) node.init.forEach(init => walk(init));
+                return;
+            }
+
+            if (node.type === 'ForGenericStatement' || node.type === 'ForNumericStatement') {
+                // for loop introduces variables
+                pushScope();
+                const scope = currentScope();
+                if (node.variables) {
+                    node.variables.forEach(v => {
+                        if (v.type === 'Identifier') {
+                            const newName = randomName();
+                            scope[v.name] = newName;
+                            v.name = newName;
+                        }
+                    });
+                }
+                // walk the rest (ranges, body)
+                if (node.left) walk(node.left);
+                if (node.right) walk(node.right);
+                if (node.step) walk(node.step);
+                if (node.body) walk(node.body);
+                popScope();
+                return;
+            }
+
+            if (node.type === 'RepeatStatement' || node.type === 'WhileStatement' || node.type === 'IfStatement' || node.type === 'ElseifClause' || node.type === 'ElseClause') {
+                if (node.clauses) {
+                    node.clauses.forEach(clause => {
+                        // clause has a 'body' array
+                        if (clause.body) {
+                            pushScope();
+                            clause.body.forEach(stmt => walk(stmt));
+                            popScope();
+                        }
+                    });
+                } else if (node.body) {
+                    // could be an array or single node
+                    if (Array.isArray(node.body)) {
+                        pushScope();
+                        node.body.forEach(stmt => walk(stmt));
+                        popScope();
+                    } else {
+                        walk(node.body);
+                    }
+                }
+                // also walk condition
+                if (node.condition) walk(node.condition);
+                return;
+            }
+
+            // For all other nodes, recursively walk their properties
+            for (let key in node) {
+                if (node.hasOwnProperty(key)) {
+                    const child = node[key];
+                    if (Array.isArray(child)) {
+                        child.forEach(item => walk(item));
+                    } else {
+                        walk(child);
+                    }
+                }
+            }
+
+            // After walking children, rename this node if it's an identifier
+            if (node.type === 'Identifier') {
+                renameIdentifier(node);
+            }
         }
 
-        // 5. boolean obfuscation: replace true/false with expressions
-        result = result.replace(/\btrue\b/g, '(1==1)');
-        result = result.replace(/\bfalse\b/g, '(1==0)');
-        // nil stays as nil, but we could also obfuscate (maybe leave)
+        walk(ast);
 
-        // 6. add junk code at the top (random variables and a dummy function)
-        const junkLines = [];
-        for (let i = 0; i < 3; i++) {
-            junkLines.push(`local ${randomName()} = ${randInt(1,1000)}`);
+        // Re-parse with locations
+        try {
+            ast = luaparse.parse(source, { luaVersion: '5.1', locations: true });
+        } catch (e) {
+            throw new Error(`Parsing with locations failed: ${e.message}`);
         }
-        junkLines.push(`local function ${junkFunc}() return "${randomName()}" end`);
-        const junkBlock = junkLines.join('; ') + '; ';
 
-        // 7. build the decoder functions (string and number decoders)
-        // string decoder: takes encoded table and key, returns original string
+        // Clear previous mapping
+        scopeStack.length = 0;
+        scopeStack.push({});
+        // We'll collect replacements: an array of { start, end, newName } (indices in source)
+        const replacements = [];
+
+        // We need a function to record a replacement for an identifier node
+        function recordReplacement(node) {
+            if (!node || node.type !== 'Identifier' || !node.loc) return;
+            const name = node.name;
+            // find the scope where it's defined
+            for (let i = scopeStack.length - 1; i >= 0; i--) {
+                const scope = scopeStack[i];
+                if (scope[name] !== undefined) {
+                    const newName = scope[name];
+                }
+            }
+        }
+    function ensureLuamin(callback) {
+        if (typeof luamin !== 'undefined') {
+            callback();
+        } else {
+            const script = document.createElement('script');
+            script.src = 'https://unpkg.com/luamin@1.0.3/luamin.min.js';
+            script.onload = callback;
+            document.head.appendChild(script);
+        }
+    }
+
+    // ---------- string/number/boolean obfuscation ----------
+    function obfuscateStringsNumbersBooleans(source) {
+        // We'll use the same techniques as before, but we must be careful because luamin might have already changed some things.
+        // We'll apply these transformations after luamin.
+
+        // 1. String obfuscation
+        const decodeStrName = randomName();
         const stringDecoder = `
 local function ${decodeStrName}(t, k)
     local s = ""
@@ -293,17 +404,80 @@ local function ${decodeStrName}(t, k)
 end
 `;
 
-        // number decoder is not needed because we already replaced numbers with expressions,
-        // but we could add a dummy function for junk
-        const numberDecoder = `local function ${decodeNumName}(x) return x end -- dummy`;
+        const stringRegex = /(["'])((?:(?!\1).)*?)\1/g;
+        const stringReplacements = [];
+        let match;
+        while ((match = stringRegex.exec(source)) !== null) {
+            const full = match[0];
+            const quote = match[1];
+            const content = match[2];
+            const key = randInt(1, 255);
+            const encoded = [];
+            for (let i = 0; i < content.length; i++) {
+                encoded.push(content.charCodeAt(i) ^ key);
+            }
+            const encodedStr = '{' + encoded.join(',') + '}';
+            const replacement = `${decodeStrName}(${encodedStr}, ${key})`;
+            stringReplacements.push({ start: match.index, end: match.index + full.length, replacement });
+        }
+        for (let i = stringReplacements.length - 1; i >= 0; i--) {
+            const r = stringReplacements[i];
+            source = source.slice(0, r.start) + r.replacement + source.slice(r.end);
+        }
 
-        // 8. combine everything
-        const finalScript = stringDecoder + numberDecoder + '\n' + junkBlock + '\n' + result;
+        // 2. Number obfuscation
+        const numberRegex = /\b(-?\d+(?:\.\d+)?)\b/g;
+        const numberReplacements = [];
+        while ((match = numberRegex.exec(source)) !== null) {
+            const full = match[0];
+            const num = parseFloat(full);
+            // generate a random expression that yields the same number
+            const a = Math.random() * 1000;
+            const b = Math.random() * 1000;
+            const c = a + b - num;
+            const expr = `((${a.toFixed(6)} + ${b.toFixed(6)}) - ${c.toFixed(6)})`;
+            numberReplacements.push({ start: match.index, end: match.index + full.length, replacement: expr });
+        }
+        for (let i = numberReplacements.length - 1; i >= 0; i--) {
+            const r = numberReplacements[i];
+            source = source.slice(0, r.start) + r.replacement + source.slice(r.end);
+        }
 
-        return finalScript;
+        // 3. Boolean obfuscation
+        source = source.replace(/\btrue\b/g, '(1==1)');
+        source = source.replace(/\bfalse\b/g, '(1==0)');
+
+        // 4. Junk code insertion
+        const junkLines = [];
+        for (let i = 0; i < 3; i++) {
+            junkLines.push(`local ${randomName()} = ${randInt(1,1000)}`);
+        }
+        junkLines.push(`local function ${randomName()}() return "${randomName()}" end`);
+        const junkBlock = junkLines.join('; ') + '; ';
+
+        return stringDecoder + junkBlock + '\n' + source;
     }
 
-    // ---------- UI & file handling ----------
+    // ---------- main obfuscation pipeline ----------
+    function obfuscateFull(source) {
+        // Remove BOM if present
+        if (source.charCodeAt(0) === 0xFEFF) source = source.slice(1);
+
+        // Step 1: Minify and rename locals using luamin
+        let minified;
+        try {
+            minified = luamin.minify(source);
+        } catch (e) {
+            throw new Error(`luamin failed: ${e.message}`);
+        }
+
+        // Step 2: Apply string/number/boolean obfuscation
+        const final = obfuscateStringsNumbersBooleans(minified);
+
+        return final;
+    }
+
+    // ---------- UI ----------
     function updateFileInfo(file) {
         if (file) fileNameDiv.innerHTML = `📄 ${file.name}  (${(file.size / 1024).toFixed(1)} KB)`;
         else fileNameDiv.innerHTML = '📄 no file selected';
@@ -349,50 +523,52 @@ end
             return;
         }
 
-        statusDiv.innerHTML = '⏳ reading & obfuscating ...';
+        statusDiv.innerHTML = '⏳ loading luamin & obfuscating ...';
         obfuscateBtn.disabled = true;
 
-        const reader = new FileReader();
-        reader.onload = (ev) => {
-            try {
-                const source = ev.target.result; // read as text
-                if (!source.trim()) {
-                    statusDiv.innerHTML = '⚠️ file is empty';
-                    return;
+        ensureLuamin(() => {
+            const reader = new FileReader();
+            reader.onload = (ev) => {
+                try {
+                    const source = ev.target.result;
+                    if (!source.trim()) {
+                        statusDiv.innerHTML = '⚠️ file is empty';
+                        return;
+                    }
+
+                    const obfuscated = obfuscateFull(source);
+
+                    let baseName = selectedFile.name;
+                    const lastDot = baseName.lastIndexOf('.');
+                    if (lastDot !== -1) baseName = baseName.substring(0, lastDot);
+                    const outputName = baseName + '_obfuscated.lua';
+
+                    const blob = new Blob([obfuscated], { type: 'text/plain;charset=utf-8' });
+                    const url = URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = outputName;
+                    document.body.appendChild(a);
+                    a.click();
+                    document.body.removeChild(a);
+                    URL.revokeObjectURL(url);
+
+                    statusDiv.innerHTML = '🎉 obfuscation complete – download started';
+                } catch (err) {
+                    console.error(err);
+                    statusDiv.innerHTML = '❌ error: ' + err.message;
+                } finally {
+                    obfuscateBtn.disabled = false;
                 }
+            };
 
-                const obfuscated = obfuscateLua(source);
-
-                let baseName = selectedFile.name;
-                const lastDot = baseName.lastIndexOf('.');
-                if (lastDot !== -1) baseName = baseName.substring(0, lastDot);
-                const outputName = baseName + '_obfuscated.lua';
-
-                const blob = new Blob([obfuscated], { type: 'text/plain;charset=utf-8' });
-                const url = URL.createObjectURL(blob);
-                const a = document.createElement('a');
-                a.href = url;
-                a.download = outputName;
-                document.body.appendChild(a);
-                a.click();
-                document.body.removeChild(a);
-                URL.revokeObjectURL(url);
-
-                statusDiv.innerHTML = '🎉 obfuscation complete – download started';
-            } catch (err) {
-                console.error(err);
-                statusDiv.innerHTML = '❌ error: ' + err.message;
-            } finally {
+            reader.onerror = () => {
+                statusDiv.innerHTML = '❌ failed to read file';
                 obfuscateBtn.disabled = false;
-            }
-        };
+            };
 
-        reader.onerror = () => {
-            statusDiv.innerHTML = '❌ failed to read file';
-            obfuscateBtn.disabled = false;
-        };
-
-        reader.readAsText(selectedFile); // read as text to process literals
+            reader.readAsText(selectedFile);
+        });
     });
 
     updateFileInfo(null);
