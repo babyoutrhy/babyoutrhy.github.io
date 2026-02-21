@@ -4,6 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Advanced LuaU Obfuscator · Full Identifier Renaming</title>
+    <!-- Load required libraries -->
+    <script src="https://unpkg.com/luaparse@0.3.1/luaparse.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/luamin@1.0.3/dist/luamin.min.js"></script>
     <style>
         * {
             box-sizing: border-box;
@@ -152,8 +155,6 @@
             text-align: center;
         }
     </style>
-    <!-- luaparse from unpkg (works) -->
-    <script src="https://unpkg.com/luaparse@0.3.1/luaparse.min.js"></script>
 </head>
 <body>
 <div class="card">
@@ -190,6 +191,12 @@
     const statusDiv = document.getElementById('status');
 
     let selectedFile = null;
+
+    // Check if required libraries are loaded
+    if (typeof luaparse === 'undefined' || typeof luamin === 'undefined') {
+        statusDiv.innerHTML = '❌ Failed to load required libraries (luaparse/luamin). Please check your internet connection.';
+        obfuscateBtn.disabled = true;
+    }
 
     // ---------- helper functions ----------
     function randomName() {
@@ -277,9 +284,6 @@ end
         if (source.charCodeAt(0) === 0xFEFF) source = source.slice(1);
 
         // Step 1: Minify and rename locals using luamin
-        if (typeof luamin === 'undefined') {
-            throw new Error('luamin not loaded');
-        }
         let minified;
         try {
             minified = luamin.minify(source);
@@ -290,22 +294,6 @@ end
         // Step 2: Apply string/number/boolean obfuscation
         const final = applyConstantObfuscation(minified);
         return final;
-    }
-
-    // ---------- load luamin dynamically from jsDelivr ----------
-    function ensureLuamin(callback) {
-        if (typeof luamin !== 'undefined') {
-            callback();
-        } else {
-            const script = document.createElement('script');
-            script.src = 'https://cdn.jsdelivr.net/npm/luamin@1.0.3/luamin.min.js';
-            script.onload = callback;
-            script.onerror = () => {
-                statusDiv.innerHTML = '❌ Failed to load luamin from CDN';
-                obfuscateBtn.disabled = false;
-            };
-            document.head.appendChild(script);
-        }
     }
 
     // ---------- UI ----------
@@ -354,53 +342,51 @@ end
             return;
         }
 
-        statusDiv.innerHTML = '⏳ loading luamin & obfuscating ...';
+        statusDiv.innerHTML = '⏳ obfuscating ...';
         obfuscateBtn.disabled = true;
 
-        ensureLuamin(() => {
-            const reader = new FileReader();
-            reader.onload = (ev) => {
-                try {
-                    const source = ev.target.result;
-                    if (!source.trim()) {
-                        statusDiv.innerHTML = '⚠️ file is empty';
-                        obfuscateBtn.disabled = false;
-                        return;
-                    }
-
-                    const obfuscated = obfuscateFull(source);
-
-                    let baseName = selectedFile.name;
-                    const lastDot = baseName.lastIndexOf('.');
-                    if (lastDot !== -1) baseName = baseName.substring(0, lastDot);
-                    const outputName = baseName + '_obfuscated.lua';
-
-                    const blob = new Blob([obfuscated], { type: 'text/plain;charset=utf-8' });
-                    const url = URL.createObjectURL(blob);
-                    const a = document.createElement('a');
-                    a.href = url;
-                    a.download = outputName;
-                    document.body.appendChild(a);
-                    a.click();
-                    document.body.removeChild(a);
-                    URL.revokeObjectURL(url);
-
-                    statusDiv.innerHTML = '🎉 obfuscation complete – download started';
-                } catch (err) {
-                    console.error(err);
-                    statusDiv.innerHTML = '❌ error: ' + err.message;
-                } finally {
+        const reader = new FileReader();
+        reader.onload = (ev) => {
+            try {
+                const source = ev.target.result;
+                if (!source.trim()) {
+                    statusDiv.innerHTML = '⚠️ file is empty';
                     obfuscateBtn.disabled = false;
+                    return;
                 }
-            };
 
-            reader.onerror = () => {
-                statusDiv.innerHTML = '❌ failed to read file';
+                const obfuscated = obfuscateFull(source);
+
+                let baseName = selectedFile.name;
+                const lastDot = baseName.lastIndexOf('.');
+                if (lastDot !== -1) baseName = baseName.substring(0, lastDot);
+                const outputName = baseName + '_obfuscated.lua';
+
+                const blob = new Blob([obfuscated], { type: 'text/plain;charset=utf-8' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = outputName;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+
+                statusDiv.innerHTML = '🎉 obfuscation complete – download started';
+            } catch (err) {
+                console.error(err);
+                statusDiv.innerHTML = '❌ error: ' + err.message;
+            } finally {
                 obfuscateBtn.disabled = false;
-            };
+            }
+        };
 
-            reader.readAsText(selectedFile);
-        });
+        reader.onerror = () => {
+            statusDiv.innerHTML = '❌ failed to read file';
+            obfuscateBtn.disabled = false;
+        };
+
+        reader.readAsText(selectedFile);
     });
 
     updateFileInfo(null);
